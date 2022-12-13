@@ -1,0 +1,126 @@
+name: Update helm charts
+
+on:
+  repository_dispatch:
+    types: [update-chart]
+
+jobs:
+  check-update-type:
+    name: Detect update type
+    runs-on: ubuntu-latest
+    outputs:
+      update_type: ${{ steps.step1.outputs.update_type }}
+    steps:
+      - name: Check if it is patch update
+        id: step1
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let oldVersion = context.payload.client_payload.oldVersion.split(".")
+            let version = context.payload.client_payload.version.split(".")
+            if (oldVersion.length != 3 && version.length != 3) {
+                    core.setFailed("Invalid version format")
+            }
+            if (oldVersion[0] != version[0]){
+                    core.setOutput("update_type", "major")
+
+            } else if(oldVersion[1] != version[1]){
+                    core.setOutput("update_type", "minor")
+
+            } else if(oldVersion[2] != version[2]){
+                    core.setOutput("update_type", "patch")
+
+            } else {
+                    core.setFailed("Invalid version format")
+            }
+
+
+  patch-update:
+    name: Patch release updates
+    runs-on: ubuntu-latest
+    needs:
+      - check-update-type
+    if: needs.check-update-type.outputs.update_type == 'patch'
+    permissions:
+      id-token: write
+      packages: write
+      contents: write
+    steps:
+      - name: Set environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable("UPDATECLI_GITHUB_OWNER", context.repo["owner"])
+            core.exportVariable("UPDATECLI_CHART_VERSION", context.payload.client_payload.version)
+
+            let repository = context.payload.client_payload.repository
+            if (repository.endsWith("kubewarden-controller")) {
+                    core.exportVariable("UPDATECLI_CONTAINER_TAG_VALUE_PATH", "image.tag")
+                    core.exportVariable("UPDATECLI_CHART_NAME", "kubewarden-controller")
+            } else if(repository.endsWith("policy-server")) {
+                    core.exportVariable("UPDATECLI_CONTAINER_TAG_VALUE_PATH", "policyServer.image.tag")
+                    core.exportVariable("UPDATECLI_CHART_NAME", "kubewarden-defaults")
+            } else {
+                    core.setFailed("Invalid repository")
+            }
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download CRDS
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let repository = context.payload.client_payload.repository
+            if (repository.endsWith("kubewarden-controller")) {
+              let crds_asset_id = context.payload.client_payload.crds_asset_id
+              console.log(`Fetching asset ID: ${crds_asset_id}`)
+              let repository_split = context.payload.client_payload.repository.split("/")
+              let owner = repository_split[0]
+              let repository = repository_split[1]
+              let asset = await github.rest.repos.getReleaseAsset({
+                      owner: owner, repo: repository, asset_id: crds_asset_id, headers:{
+                              accept: "application/octet-stream"},
+              })
+              let fs = require('fs');
+              fs.writeFileSync("crds.tar.gz", Buffer.from(asset.data))
+            }
+
+      - name: Update CRDS
+        id: update_crds
+        run: |
+          tar -xvf crds.tar.gz
+          find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+
+          set +e
+          git diff --exit-code --no-patch charts/kubewarden-crds
+          echo "must_update_crds_chart=$?" >> $GITHUB_OUTPUT
+
+      - name: Install Updatecli in the runner
+        uses: updatecli/updatecli-action@v2
+
+      - name: Update container image tags
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "updatecli apply --config ./updatecli/updatecli.d/update-container-image-tag.yaml --values updatecli/values.yaml"
+
+      - name: Update chart values
+        run: make generate-values
+
+      - name: Update patch version of the helm chart
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
+
+      - name: Update CRDs Helm chart
+        if: steps.update_crds.outputs.must_update_crds_chart == 1
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPDATECLI_CHART_NAME: "kubewarden-crds"
+        run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
+
+      - name: Commit changes
+        run: "updatecli/scripts/commit-changes.sh"
+

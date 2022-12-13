@@ -1,0 +1,31 @@
+name: Update container image tag used in the chart
+
+sources:
+  source/chartValuesFile:
+    kind: yaml
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+
+  source/valuesFile:
+    kind: yaml
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+
+targets:
+  updateChartValuesFile:
+    kind: yaml
+    sourceid: source/chartValuesFile
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      value: '{{ requiredEnv .releaseVersion }}'
+
+  updateValuesFile:
+    kind: yaml
+    sourceid: source/valuesFile
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      value: '{{ requiredEnv .releaseVersion }}'

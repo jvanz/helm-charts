@@ -1,0 +1,21 @@
+name: Update chart patch version
+
+sources:
+  chart:
+    name: Load chart version
+    kind: yaml
+    spec:
+      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      key: "version"
+
+
+targets:
+  chart-patch-version-update:
+    name: Bump chart patch version
+    kind: yaml
+    sourceid: chart
+    transformers:
+      - semverinc: "patch"
+    spec:
+      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      key: "version"

@@ -1,0 +1,7 @@
+releaseVersion: "UPDATECLI_CHART_VERSION"
+chart: "UPDATECLI_CHART_NAME"
+containerImageTagValuePath: "UPDATECLI_CONTAINER_TAG_VALUE_PATH"
+github:
+  owner: "UPDATECLI_GITHUB_OWNER"
+  token: "UPDATECLI_GITHUB_TOKEN"
+  branch: "main"

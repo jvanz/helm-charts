@@ -9,7 +9,7 @@ jobs:
     name: Detect update type
     runs-on: ubuntu-latest
     outputs:
-      update_type: ${{ steps.step2.outputs.update_type }}
+      update_type: ${{ steps.check_update_type.outputs.update_type }}
     steps:
       - name: Install semver comparison tool
         run: |
@@ -17,6 +17,7 @@ jobs:
           chmod +x ./semver
 
       - name: Check if it is a patch update
+        id: check_update_type
         run: |
           OLDVERSION=${{github.event.client_payload.oldVersion}}
           NEWVERSION=${{github.event.client_payload.version}}
@@ -34,6 +35,7 @@ jobs:
           UPDATE_TYPE=$(./semver diff $OLDVERSION $NEWVERSION)
           echo "update_type=$UPDATE_TYPE" >> $GITHUB_OUTPUT
           echo "update_type=$UPDATE_TYPE"
+          cat $GITHUB_OUTPUT
 
   patch-update:
     name: Patch release updates

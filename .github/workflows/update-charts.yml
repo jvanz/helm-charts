@@ -32,8 +32,8 @@ jobs:
           fi
 
           UPDATE_TYPE=$(./semver diff $OLDVERSION $NEWVERSION)
-          echo "must_update_crds_chart=$UPDATE_TYPE" >> $GITHUB_OUTPUT
-          echo "UPDATE_TYPE=$UPDATE_TYPE"
+          echo "update_type=$UPDATE_TYPE" >> $GITHUB_OUTPUT
+          echo "update_type=$UPDATE_TYPE"
 
   patch-update:
     name: Patch release updates

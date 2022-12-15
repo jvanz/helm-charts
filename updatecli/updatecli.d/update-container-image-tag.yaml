@@ -17,6 +17,7 @@ targets:
   updateChartValuesFile:
     kind: yaml
     sourceid: source/chartValuesFile
+    scmid: "default"
     spec:
       file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
       key: '{{ requiredEnv .containerImageTagValuePath }}'
@@ -25,7 +26,38 @@ targets:
   updateValuesFile:
     kind: yaml
     sourceid: source/valuesFile
+    scmid: "default"
     spec:
       file: "charts/{{ requiredEnv .chart  }}/values.yaml"
       key: '{{ requiredEnv .containerImageTagValuePath }}'
       value: '{{ requiredEnv .releaseVersion }}'
+
+actions:
+  action/createUpdatePR:
+    helm-charts:
+    kind: "github/pullrequest"
+    scmid: "default"
+    spec:
+      automerge: true
+      mergemethod: squash
+      description: "Helm chart update"
+      draft: false
+      labels:
+        - "kind/enhancement"
+      title: "Helm chart update"
+
+scms
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      #directory: "directory where to clone the git repository"
+      owner: "{{ requiredEnv .github.owner }}"
+      repository: "helm-charts"
+      token: "{{ .github.token }}"
+      username: "{{ .github.user }}"
+      branch: "{{ .github.branch }}"
+      commitmessage:
+        type: "{{ requiredEnv .updateType }}"
+        title: "Override default commit title"

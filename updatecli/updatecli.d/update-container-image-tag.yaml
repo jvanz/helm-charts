@@ -46,7 +46,7 @@ actions:
         - "kind/enhancement"
       title: "Helm chart update"
 
-scms
+scms:
   default:
     kind: github
     spec:

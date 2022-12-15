@@ -60,4 +60,4 @@ scms
       branch: "{{ .github.branch }}"
       commitmessage:
         type: "{{ requiredEnv .updateType }}"
-        title: "Override default commit title"
+        title: "Update container images"

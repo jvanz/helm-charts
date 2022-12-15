@@ -54,6 +54,7 @@ jobs:
           script: |
             core.exportVariable("UPDATECLI_GITHUB_OWNER", context.repo["owner"])
             core.exportVariable("UPDATECLI_CHART_VERSION", context.payload.client_payload.version)
+            core.exportVariable("UPDATECLI_UPDATE_TYPE", "fix")
 
             let repository = context.payload.client_payload.repository
             if (repository.endsWith("kubewarden-controller")) {

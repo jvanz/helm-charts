@@ -15,6 +15,7 @@ sources:
 
 targets:
   updateChartValuesFile:
+    name: "Update container image in the chart-values.yaml file"
     kind: yaml
     sourceid: source/chartValuesFile
     scmid: "default"
@@ -25,6 +26,7 @@ targets:
 
   updateValuesFile:
     kind: yaml
+    name: "Update container image in the values.yaml file"
     sourceid: source/valuesFile
     scmid: "default"
     spec:

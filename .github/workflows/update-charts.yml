@@ -9,7 +9,7 @@ jobs:
     name: Detect update type
     runs-on: ubuntu-latest
     outputs:
-      update_type: ${{ steps.step1.outputs.update_type }}
+      update_type: ${{ steps.step2.outputs.update_type }}
     steps:
       - name: Install semver comparison tool
         run: |

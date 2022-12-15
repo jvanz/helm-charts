@@ -14,6 +14,7 @@ jobs:
       - name: Install semver comparison tool
         run: |
           wget -O ./semver https://github.com/fsaintjacques/semver-tool/raw/3.4.0/src/semver
+          chmod +x ./semver
 
       - name: Check if it is a patch update
         run: |

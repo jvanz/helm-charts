@@ -52,13 +52,13 @@ scms:
   default:
     kind: github
     spec:
-      user: "{{ .github.user }}"
+      user: "{{ .github.author }}"
       email: "{{ .github.email }}"
-      #directory: "directory where to clone the git repository"
+      directory: "myhelmcharts"
       owner: "{{ requiredEnv .github.owner }}"
       repository: "helm-charts"
-      token: "{{ .github.token }}"
-      username: "{{ .github.user }}"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ requiredEnv .github.user }}"
       branch: "{{ .github.branch }}"
       commitmessage:
         type: "{{ requiredEnv .updateType }}"

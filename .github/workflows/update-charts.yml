@@ -109,21 +109,21 @@ jobs:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "updatecli apply --config ./updatecli/updatecli.d/update-container-image-tag.yaml --values updatecli/values.yaml"
 
-      - name: Update chart values
-        run: make generate-values
+        #- name: Update chart values
+        #  run: make generate-values
 
-      - name: Update patch version of the helm chart
-        env:
-          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
+        #- name: Update patch version of the helm chart
+        #  env:
+        #    UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #  run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
 
-      - name: Update CRDs Helm chart
-        if: steps.update_crds.outputs.must_update_crds_chart == 1
-        env:
-          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          UPDATECLI_CHART_NAME: "kubewarden-crds"
-        run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
+        #- name: Update CRDs Helm chart
+        #  if: steps.update_crds.outputs.must_update_crds_chart == 1
+        #  env:
+        #    UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #    UPDATECLI_CHART_NAME: "kubewarden-crds"
+        #  run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"
 
-      - name: Commit changes
-        run: "updatecli/scripts/commit-changes.sh"
+        #- name: Commit changes
+        #  run: "updatecli/scripts/commit-changes.sh"
 

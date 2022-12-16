@@ -14,7 +14,7 @@ sources:
       key: '{{ requiredEnv .containerImageTagValuePath }}'
 
 targets:
-  updateChartValuesFile:
+  target/updateChartValuesFile:
     name: "Update container image in the chart-values.yaml file"
     kind: yaml
     sourceid: source/chartValuesFile
@@ -24,7 +24,7 @@ targets:
       key: '{{ requiredEnv .containerImageTagValuePath }}'
       value: '{{ requiredEnv .releaseVersion }}'
 
-  updateValuesFile:
+  target/updateValuesFile:
     kind: yaml
     name: "Update container image in the values.yaml file"
     sourceid: source/valuesFile

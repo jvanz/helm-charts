@@ -17,42 +17,36 @@ common:
 nameOverride: ""
 # fullnameOverride completely replaces the generated release name
 fullnameOverride: ""
-
 # Secrets to pull container images from private registries
 imagePullSecrets: []
-
 # open-telemetry options
 telemetry:
   enabled: False
   metrics:
     port: 8080
   tracing:
-    jaeger:
-      {}
-      # Jaeger endpoint to send traces to
-      # endpoint: "all-in-one-collector.jaeger.svc.cluster.local:14250"
-      # tls:
-      #  insecure: true
+    jaeger: {}
+    # Jaeger endpoint to send traces to
+    # endpoint: "all-in-one-collector.jaeger.svc.cluster.local:14250"
+    # tls:
+    #  insecure: true
 image:
   # The registry is defined in the common.cattle.systemDefaultRegistry value
   # controller image to be used
   repository: "kubewarden/kubewarden-controller"
   # image tag
-  tag: "v1.4.0"
-
+  tag: "v1.3.12"
 preDeleteJob:
   image:
     # The registry is defined in the common.cattle.systemDefaultRegistry value
     # kubectl image to be used in the pre-delete helm hook
     repository: "kubewarden/kubectl"
     tag: "v1.23.3"
-
 # kubewarden-controller deployment settings:
 podAnnotations: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
 tls:
   # source options:
   # - "cert-manager-self-signed": Scaffold cert-manager integration, and create
@@ -64,7 +58,6 @@ tls:
   source: cert-manager-self-signed
   # "cert-manager"-only options:
   certManagerIssuerName: ""
-
 ## Resource limits & requests
 ## Ref: https://kubernetes.io/docs/user-guide/compute-resources/
 resources:

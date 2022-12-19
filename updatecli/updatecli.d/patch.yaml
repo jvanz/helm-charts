@@ -1,0 +1,93 @@
+name: Update chart patch version
+
+sources:
+  chart:
+    name: Load chart version
+    kind: yaml
+    spec:
+      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      key: "version"
+  chartValuesFile:
+    kind: yaml
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+
+  valuesFile:
+    kind: yaml
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+
+targets:
+  updateChartValuesFile:
+    name: "Update container image in the chart-values.yaml file"
+    kind: yaml
+    sourceid: chartValuesFile
+    scmid: "default"
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      value: '{{ requiredEnv .releaseVersion }}'
+  updateValuesFile:
+    kind: yaml
+    name: "Update container image in the values.yaml file"
+    sourceid: valuesFile
+    scmid: "default"
+    spec:
+      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
+      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      value: '{{ requiredEnv .releaseVersion }}'
+  chartPatchVersionUpdate:
+    name: Bump chart patch version
+    kind: yaml
+    sourceid: chart
+    scmid: "default"
+    transformers:
+      - semverinc: "patch"
+    spec:
+      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      key: "version"
+  chartPatchVersionUpdate2:
+    name: Bump chart patch version in annotations
+    kind: yaml
+    sourceid: chart
+    scmid: "default"
+    transformers:
+      - semverinc: "patch"
+    spec:
+      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      key: 'annotations.catalog\.cattle\.io/upstream-version'
+
+actions:
+  createUpdatePR:
+    title: "Create PR to update Helm charts"
+    helm-charts:
+    kind: "github/pullrequest"
+    scmid: "default"
+    spec:
+      automerge: false
+      mergemethod: squash
+      description: |
+        Automatic Helm chart update.
+        This PR has been created by the automation used to automatically update the Helm charts when some Kubewarden component is released
+      draft: false
+      labels:
+        - "kind/enhancement"
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.author }}"
+      email: "{{ .github.email }}"
+      directory: "/tmp/helm-charts"
+      owner: "{{ requiredEnv .github.owner }}"
+      repository: "helm-charts"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ requiredEnv .github.user }}"
+      branch: "{{ .github.branch }}"
+      commitmessage:
+        type: "{{ requiredEnv .updateType }}"
+        title: "Update container images"
+        hidecredit: true

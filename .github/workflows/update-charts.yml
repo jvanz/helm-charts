@@ -1,0 +1,112 @@
+name: Update helm charts
+
+on:
+  repository_dispatch:
+    types: [update-chart]
+
+jobs:
+  check-update-type:
+    name: Detect update type
+    runs-on: ubuntu-latest
+    outputs:
+      update_type: ${{ steps.check_update_type.outputs.update_type }}
+    steps:
+      - name: Install semver comparison tool
+        run: |
+          INSTALL_DIR=$HOME/.semver
+          mkdir -p $INSTALL_DIR
+          wget -O $INSTALL_DIR/semver https://github.com/fsaintjacques/semver-tool/raw/3.4.0/src/semver
+          chmod +x $INSTALL_DIR/semver
+          echo $INSTALL_DIR >> $GITHUB_PATH
+
+      - name: Check if it is a patch update
+        id: check_update_type
+        run: |
+          OLDVERSION=${{github.event.client_payload.oldVersion}}
+          NEWVERSION=${{github.event.client_payload.version}}
+
+          VALID=$(semver validate $OLDVERSION)
+          if [[ $VALID == "invalid" ]]; then
+                  exit 1
+          fi
+
+          VALID=$(semver validate $NEWVERSION)
+          if [[ $VALID == "invalid" ]]; then
+                  exit 1
+          fi
+
+          UPDATE_TYPE=$(semver diff $OLDVERSION $NEWVERSION)
+          echo "update_type=$UPDATE_TYPE" >> $GITHUB_OUTPUT
+          echo "update_type=$UPDATE_TYPE"
+          cat $GITHUB_OUTPUT
+
+  patch-update:
+    name: Patch release updates
+    runs-on: ubuntu-latest
+    needs:
+      - check-update-type
+    if: needs.check-update-type.outputs.update_type == 'patch'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Set environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable("UPDATECLI_GITHUB_OWNER", context.repo["owner"])
+            core.exportVariable("UPDATECLI_CHART_VERSION", context.payload.client_payload.version)
+            core.exportVariable("UPDATECLI_UPDATE_TYPE", "fix")
+
+            let repository = context.payload.client_payload.repository
+            if (repository.endsWith("kubewarden-controller")) {
+                    core.exportVariable("UPDATECLI_CONTAINER_TAG_VALUE_PATH", "image.tag")
+                    core.exportVariable("UPDATECLI_CHART_NAME", "kubewarden-controller")
+            } else if(repository.endsWith("policy-server")) {
+                    core.exportVariable("UPDATECLI_CONTAINER_TAG_VALUE_PATH", "policyServer.image.tag")
+                    core.exportVariable("UPDATECLI_CHART_NAME", "kubewarden-defaults")
+            } else {
+                    core.setFailed("Invalid repository")
+            }
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download CRDS
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let repository = context.payload.client_payload.repository
+            if (repository.endsWith("kubewarden-controller")) {
+              let crds_asset_id = context.payload.client_payload.crds_asset_id
+              console.log(`Fetching asset ID: ${crds_asset_id}`)
+              let repository_split = context.payload.client_payload.repository.split("/")
+              let owner = repository_split[0]
+              let repository = repository_split[1]
+              let asset = await github.rest.repos.getReleaseAsset({
+                      owner: owner, repo: repository, asset_id: crds_asset_id, headers:{
+                              accept: "application/octet-stream"},
+              })
+              let fs = require('fs');
+              fs.writeFileSync("crds.tar.gz", Buffer.from(asset.data))
+            }
+
+      - name: Update CRDS
+        id: update_crds
+        run: |
+          tar -xvf crds.tar.gz
+          find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+
+          set +e
+          git diff --exit-code --no-patch charts/kubewarden-crds
+          echo "must_update_crds_chart=$?" >> $GITHUB_OUTPUT
+
+      - name: Install Updatecli in the runner
+        uses: updatecli/updatecli-action@v2
+
+      - name: Update Helm charts
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "updatecli apply --config ./updatecli/updatecli.d/patch.yaml --values updatecli/values.yaml"

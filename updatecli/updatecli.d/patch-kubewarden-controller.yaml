@@ -90,6 +90,6 @@ scms:
       username: "{{ requiredEnv .github.user }}"
       branch: "{{ .github.branch }}"
       commitmessage:
-        type: "{{ requiredEnv .updateType }}"
+        type: "fix"
         title: "Update kubewarden-controller Helm chart"
         hidecredit: true

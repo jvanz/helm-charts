@@ -5,19 +5,19 @@ sources:
     name: Load chart version
     kind: yaml
     spec:
-      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      file: "file://charts/kubewarden-controller/Chart.yaml"
       key: "version"
   chartValuesFile:
     kind: yaml
     spec:
-      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
-      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      file: "charts/kubewarden-controller/chart-values.yaml"
+      key: "image.tag"
 
   valuesFile:
     kind: yaml
     spec:
-      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
-      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      file: "charts/kubewarden-controller/values.yaml"
+      key: "image.tag"
 
 targets:
   updateChartValuesFile:
@@ -26,8 +26,8 @@ targets:
     sourceid: chartValuesFile
     scmid: "default"
     spec:
-      file: "charts/{{ requiredEnv .chart  }}/chart-values.yaml"
-      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      file: "charts/kubewarden-controller/chart-values.yaml"
+      key: "image.tag"
       value: '{{ requiredEnv .releaseVersion }}'
   updateValuesFile:
     kind: yaml
@@ -35,8 +35,8 @@ targets:
     sourceid: valuesFile
     scmid: "default"
     spec:
-      file: "charts/{{ requiredEnv .chart  }}/values.yaml"
-      key: '{{ requiredEnv .containerImageTagValuePath }}'
+      file: "charts/kubewarden-controller/values.yaml"
+      key: "image.tag"
       value: '{{ requiredEnv .releaseVersion }}'
   chartPatchVersionUpdate:
     name: Bump chart patch version
@@ -46,7 +46,7 @@ targets:
     transformers:
       - semverinc: "patch"
     spec:
-      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      file: "file://charts/kubewarden-controller/Chart.yaml"
       key: "version"
   chartPatchVersionUpdate2:
     name: Bump chart patch version in annotations
@@ -56,7 +56,7 @@ targets:
     transformers:
       - semverinc: "patch"
     spec:
-      file: "file://charts/{{ requiredEnv .chart  }}/Chart.yaml"
+      file: "file://charts/kubewarden-controller/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
 
 actions:
@@ -71,6 +71,8 @@ actions:
       description: |
         Automatic Helm chart update.
         This PR has been created by the automation used to automatically update the Helm charts when some Kubewarden component is released
+
+        REMEMBER TO SQUASH THE COMMIT BEFORE MERGING THIS PR!
       draft: false
       labels:
         - "kind/enhancement"
@@ -89,5 +91,5 @@ scms:
       branch: "{{ .github.branch }}"
       commitmessage:
         type: "{{ requiredEnv .updateType }}"
-        title: "Update container images"
+        title: "Update kubewarden-controller Helm chart"
         hidecredit: true

@@ -1,4 +1,4 @@
-name: Update kubewarden-controller chart patch version with no CRDs updates
+name: Update kubewarden-controller chart patch version with CRDs update
 
 sources:
   controllerChart:
@@ -17,6 +17,13 @@ sources:
     spec:
       file: "charts/kubewarden-controller/values.yaml"
       key: "image.tag"
+  defaultsChartVersion:
+    kind: yaml
+    transformers:
+      - semverinc: "patch"
+    spec:
+      file: "charts/kubewarden-crds/Chart.yaml"
+      key: "version"
 
 targets:
   updateChartValuesFile:
@@ -57,6 +64,33 @@ targets:
     spec:
       file: "file://charts/kubewarden-controller/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
+  updateDefaultsAutoInstallAnnotation:
+    name: "Update kubewarden-controller auto-install annotation"
+    kind: yaml
+    sourceid: defaultsChartVersion
+    scmid: "default"
+    spec:
+      file: "file://charts/kubewarden-controller/Chart.yaml"
+      key: 'annotations.catalog\.cattle\.io/auto-install'
+      value: 'kubewarden-crds={{ source "defaultsChartVersion" }}'
+  updateDefaultsUpstreamVersionAnnotation:
+    name: "Update kubewarden-crds upstream-version annotation"
+    kind: yaml
+    sourceid: defaultsChartVersion
+    scmid: "default"
+    spec:
+      file: "file://charts/kubewarden-crds/Chart.yaml"
+      key: 'annotations.catalog\.cattle\.io/upstream-version'
+      value: '{{ source "defaultsChartVersion" }}'
+  updateDefaultsChartPatchVersion:
+    name: "Update kubewarden-crds version"
+    kind: yaml
+    sourceid: defaultsChartVersion
+    scmid: "default"
+    spec:
+      file: "file://charts/kubewarden-crds/Chart.yaml"
+      key: 'version'
+      value: '{{ source "defaultsChartVersion" }}'
 
 actions:
   createUpdatePR:

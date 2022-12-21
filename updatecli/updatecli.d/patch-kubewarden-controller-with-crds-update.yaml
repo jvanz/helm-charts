@@ -27,7 +27,7 @@ sources:
   policyServerSource:
     kind: shell
     spec:
-      command: echo "policyserver"
+      command: echo policyserver
   admissionPolicySource:
     kind: shell
     spec:

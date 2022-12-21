@@ -42,7 +42,7 @@ targets:
     name: "Install policy server CRD"
     kind: shell
     scmid: "default"
-    sourceid: policyServerSource
+    disablesourceinput: true
     spec:
       command: bash updatecli/scripts/install_crds.sh
         #  installPolicyServerCRD:

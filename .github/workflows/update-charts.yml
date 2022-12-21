@@ -97,14 +97,15 @@ jobs:
           # Here the commands are used to detect CRDs changes. In the script they are used
           # to install the CRDs
           tar -xvf /tmp/crds.tar.gz
+          mv /tmp/*.yaml .
           ls /tmp
-          find /tmp -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
-          find /tmp -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
-          find /tmp -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+          find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
 
-          find /tmp -maxdepth 1 -name "*policyserver*" -exec  echo \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
-          find /tmp -maxdepth 1 -name "*admissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
-          find /tmp -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+          find . -maxdepth 1 -name "*policyserver*" -exec  echo \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
           echo "------------------------------"
           ls
 

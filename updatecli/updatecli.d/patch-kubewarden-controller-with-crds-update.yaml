@@ -24,41 +24,48 @@ sources:
     spec:
       file: "charts/kubewarden-crds/Chart.yaml"
       key: "version"
-  policyServerSource:
-    kind: shell
-    spec:
-      command: echo policyserver
-  admissionPolicySource:
-    kind: shell
-    spec:
-      command: echo admissionpolicies
-  clusterAdmissionPolicySource:
-    kind: shell
-    spec:
-      command: echo clusteradmissionpolicies
+      #  policyServerSource:
+      #    kind: shell
+      #    spec:
+      #      command: echo policyserver
+      #  admissionPolicySource:
+      #    kind: shell
+      #    spec:
+      #      command: echo admissionpolicies
+      #  clusterAdmissionPolicySource:
+      #    kind: shell
+      #    spec:
+      #      command: echo clusteradmissionpolicies
 
 targets:
-  installPolicyServerCRD:
+  installCRD:
     name: "Install policy server CRD"
     kind: shell
     scmid: "default"
     sourceid: policyServerSource
     spec:
       command: bash updatecli/scripts/install_crds.sh
-  installAdmissionPolicyCRD:
-    name: "Install admission policy CRD"
-    kind: shell
-    scmid: "default"
-    sourceid: admissionPolicySource
-    spec:
-      command: bash updatecli/scripts/install_crds.sh
-  installClusterAdmissionPolicyCRD:
-    name: "Install cluster admission policy CRD"
-    kind: shell
-    scmid: "default"
-    sourceid: clusterAdmissionPolicySource
-    spec:
-      command: bash updatecli/scripts/install_crds.sh
+        #  installPolicyServerCRD:
+        #    name: "Install policy server CRD"
+        #    kind: shell
+        #    scmid: "default"
+        #    sourceid: policyServerSource
+        #    spec:
+        #      command: bash updatecli/scripts/install_crds.sh
+        #  installAdmissionPolicyCRD:
+        #    name: "Install admission policy CRD"
+        #    kind: shell
+        #    scmid: "default"
+        #    sourceid: admissionPolicySource
+        #    spec:
+        #      command: bash updatecli/scripts/install_crds.sh
+        #  installClusterAdmissionPolicyCRD:
+        #    name: "Install cluster admission policy CRD"
+        #    kind: shell
+        #    scmid: "default"
+        #    sourceid: clusterAdmissionPolicySource
+        #    spec:
+        #      command: bash updatecli/scripts/install_crds.sh
   updateChartValuesFile:
     name: "Update container image in the chart-values.yaml file"
     kind: yaml

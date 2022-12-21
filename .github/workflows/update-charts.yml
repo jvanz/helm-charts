@@ -107,7 +107,6 @@ jobs:
           find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicies.yaml \;
           find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
 
-          ls
 
           set +e
           git diff --exit-code --no-patch charts/kubewarden-crds

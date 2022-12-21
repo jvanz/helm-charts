@@ -1,6 +1,8 @@
 #!/bin/bash
 
-tar -xvf crds.tar.gz
+tar -xvf /tmp/crds.tar.gz
+ls /tmp
+echo "$PWD"
 ls
 echo "find . -maxdepth 1 -name \"*$1*\" -exec  mv \{\} charts/kubewarden-crds/templates/$1.yaml \;"
 find . -maxdepth 1 -name "*$1*" -exec  mv \{\} charts/kubewarden-crds/templates/$1.yaml \;

@@ -86,7 +86,7 @@ jobs:
                               accept: "application/octet-stream"},
               })
               let fs = require('fs');
-              fs.writeFileSync("crds.tar.gz", Buffer.from(asset.data))
+              fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
             }
 
       - name: Update CRDS

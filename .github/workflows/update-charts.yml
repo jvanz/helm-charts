@@ -101,6 +101,8 @@ jobs:
           find /tmp -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
           find /tmp -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;
           find /tmp -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+          echo "------------------------------"
+          ls
 
           set +e
           git diff --exit-code --no-patch charts/kubewarden-crds

@@ -185,6 +185,8 @@ spec:
                   their associated PEM encoded certificate authorities that have to
                   be used to verify the certificate used by the endpoint.
                 type: object
+              testing:
+                type: string
               verificationConfig:
                 description: Name of VerificationConfig configmap in the same namespace,
                   containing Sigstore verification configuration. The configuration

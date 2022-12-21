@@ -26,6 +26,12 @@ sources:
       key: "version"
 
 targets:
+  installCRDs:
+    name: "Install CRDs in the kubewarden-crds chart"
+    kind: shell
+    scmid: "default"
+    spec:
+      command: updatecli/scripts/install_crds.sh
   updateChartValuesFile:
     name: "Update container image in the chart-values.yaml file"
     kind: yaml

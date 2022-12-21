@@ -93,6 +93,9 @@ jobs:
         if: endsWith(github.event.client_payload.repository, 'kubewarden-controller')
         id: update_crds
         run: |
+          # The next commands are use in the updatecli/scripts/install_crds.sh as well.
+          # Here the commands are used to detect CRDs changes. In the script they are used
+          # to install the CRDs
           tar -xvf crds.tar.gz
           find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyserver.yaml \;
           find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicy.yaml \;

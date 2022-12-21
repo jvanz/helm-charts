@@ -24,13 +24,39 @@ sources:
     spec:
       file: "charts/kubewarden-crds/Chart.yaml"
       key: "version"
+  policyServerSource:
+    kind: shell
+    spec:
+      command: echo "policyserver"
+  admissionPolicySource:
+    kind: shell
+    spec:
+      command: echo admissionpolicies
+  clusterAdmissionPolicySource:
+    kind: shell
+    spec:
+      command: echo clusteradmissionpolicies
 
 targets:
-  installCRDs:
-    name: "Install CRDs in the kubewarden-crds chart"
+  installPolicyServerCRD:
+    name: "Install policy server CRD"
     kind: shell
     scmid: "default"
-    disablesourceinput: true
+    sourceid: policyServerSource
+    spec:
+      command: bash updatecli/scripts/install_crds.sh
+  installAdmissionPolicyCRD:
+    name: "Install admission policy CRD"
+    kind: shell
+    scmid: "default"
+    sourceid: admissionPolicySource
+    spec:
+      command: bash updatecli/scripts/install_crds.sh
+  installClusterAdmissionPolicyCRD:
+    name: "Install cluster admission policy CRD"
+    kind: shell
+    scmid: "default"
+    sourceid: clusterAdmissionPolicySource
     spec:
       command: bash updatecli/scripts/install_crds.sh
   updateChartValuesFile:

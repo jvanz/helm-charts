@@ -30,6 +30,7 @@ targets:
     name: "Install CRDs in the kubewarden-crds chart"
     kind: shell
     scmid: "default"
+    disablesourceinput: true
     spec:
       command: updatecli/scripts/install_crds.sh
   updateChartValuesFile:

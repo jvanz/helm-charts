@@ -17,7 +17,7 @@ sources:
     spec:
       file: "charts/kubewarden-controller/values.yaml"
       key: "image.tag"
-  defaultsChartVersion:
+  crdChartVersion:
     kind: yaml
     transformers:
       - semverinc: "patch"
@@ -33,6 +33,7 @@ targets:
     disablesourceinput: true
     spec:
       command: bash updatecli/scripts/install_crds.sh
+
   updateChartValuesFile:
     name: "Update container image in the chart-values.yaml file"
     kind: yaml
@@ -42,6 +43,7 @@ targets:
       file: "charts/kubewarden-controller/chart-values.yaml"
       key: "image.tag"
       value: '{{ requiredEnv .releaseVersion }}'
+
   updateValuesFile:
     kind: yaml
     name: "Update container image in the values.yaml file"
@@ -51,6 +53,7 @@ targets:
       file: "charts/kubewarden-controller/values.yaml"
       key: "image.tag"
       value: '{{ requiredEnv .releaseVersion }}'
+
   chartPatchVersionUpdate:
     name: Bump chart patch version
     kind: yaml
@@ -61,6 +64,7 @@ targets:
     spec:
       file: "file://charts/kubewarden-controller/Chart.yaml"
       key: "version"
+
   chartPatchVersionUpdate2:
     name: Bump chart patch version in annotations
     kind: yaml
@@ -71,33 +75,36 @@ targets:
     spec:
       file: "file://charts/kubewarden-controller/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
+
   updateDefaultsAutoInstallAnnotation:
     name: "Update kubewarden-controller auto-install annotation"
     kind: yaml
-    sourceid: defaultsChartVersion
+    sourceid: crdChartVersion
     scmid: "default"
     spec:
       file: "file://charts/kubewarden-controller/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/auto-install'
-      value: 'kubewarden-crds={{ source "defaultsChartVersion" }}'
-  updateDefaultsUpstreamVersionAnnotation:
+      value: 'kubewarden-crds={{ source "crdChartVersion" }}'
+
+  updateCRDUpstreamVersionAnnotation:
     name: "Update kubewarden-crds upstream-version annotation"
     kind: yaml
-    sourceid: defaultsChartVersion
+    sourceid: crdChartVersion
     scmid: "default"
     spec:
       file: "file://charts/kubewarden-crds/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
-      value: '{{ source "defaultsChartVersion" }}'
-  updateDefaultsChartPatchVersion:
+      value: '{{ source "crdChartVersion" }}'
+
+  updateCRDChartPatchVersion:
     name: "Update kubewarden-crds version"
     kind: yaml
-    sourceid: defaultsChartVersion
+    sourceid: crdChartVersion
     scmid: "default"
     spec:
       file: "file://charts/kubewarden-crds/Chart.yaml"
       key: 'version'
-      value: '{{ source "defaultsChartVersion" }}'
+      value: '{{ source "crdChartVersion" }}'
 
 actions:
   createUpdatePR:

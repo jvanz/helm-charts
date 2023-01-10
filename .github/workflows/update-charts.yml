@@ -139,6 +139,66 @@ jobs:
       - check-update-type
     if: needs.check-update-type.outputs.update_type == 'major' || needs.check-update-type.outputs.update_type == 'minor'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check if CRD are available in the Kubewarden controller
+        id: download_crds
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let repository = context.payload.client_payload.repository
+            let repository_split = context.payload.client_payload.repository.split("/")
+            let owner = repository_split[0]
+            let repository = repository_split[1]
+            let crds_asset_id = null
+            if (repository.endsWith("kubewarden-controller")) {
+              // The trigger came from the controller repository. Thus, the CRD tarball must be available
+              crds_asset_id = context.payload.client_payload.crds_asset_id
+
+            } else {
+              // check if the CRDs are available to download
+              let release = await github.rest.repos.getReleaseByTag({ owner, "kubewarden-controller", context.payload.client_payload.version });
+              let assets = await github.rest.repos.listReleaseAssets({ owner, "kubewarden-controller", release.data.id, });
+              for (const file of assets.data) {
+                if (file.name == "CRDS.tar.gz") {
+                  crds_asset_id = file.id
+                }
+              }
+            }
+            if (crds_asset_id != null) {
+              console.log(`Fetching asset ID: ${crds_asset_id}`)
+              let asset = await github.rest.repos.getReleaseAsset({
+                      owner: owner, repository: repository, asset_id: crds_asset_id,
+                      headers:{ accept: "application/octet-stream"}})
+              let fs = require('fs');
+              fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
+            } else {
+              core.warning("Aborting chart update. No CRDs found")
+            }
+
+      - name: Update CRDS
+        id: update_crds
+        if: steps.download_crds.outputs.crd_downloaded == 'true'
+        run: |
+          # The next commands are use in the updatecli/scripts/install_crds.sh as well.
+          # Here the commands are used to detect CRDs changes. In the script they are used
+          # to install the CRDs
+          tar -xvf /tmp/crds.tar.gz
+          find . -maxdepth 1 -name "*policyservers*" -exec  echo \{\} charts/kubewarden-crds/templates/policyservers.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/admissionpolicies.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  echo \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+
+          find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyservers.yaml \;
+          find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicies.yaml \;
+          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
+
+
+          set +e
+          git diff --exit-code --no-patch charts/kubewarden-crds
+          echo "must_update_crds_chart=$?" >> $GITHUB_OUTPUT
+
+
       - name: Set environment variables
         # TODO do I need this step?
         uses: actions/github-script@v6
@@ -146,11 +206,6 @@ jobs:
           script: |
             core.exportVariable("UPDATECLI_GITHUB_OWNER", context.repo["owner"])
             core.exportVariable("UPDATECLI_CHART_VERSION", context.payload.client_payload.version)
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # TODO add steps to update CRDs
 
       - name: Install Updatecli in the runner
         uses: updatecli/updatecli-action@v2

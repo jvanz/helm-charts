@@ -27,7 +27,7 @@ sources:
 
 targets:
   installCRD:
-    name: "Install policy server CRD"
+    name: "Updates CRDs"
     kind: shell
     scmid: "default"
     disablesourceinput: true

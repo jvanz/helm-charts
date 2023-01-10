@@ -207,15 +207,15 @@ scms:
   kwctlGit:
     kind: "git"
     spec:
-        url: "git@github.com:{{ requiredEnv .github.user }}/kwctl.git"
+        url: "https://github.com/{{ requiredEnv .github.user }}/kwctl.git"
         branch: "main"
   kubewardenControllerGit:
     kind: "git"
     spec:
-        url: "git@github.com:{{ requiredEnv .github.user }}/kubewarden-controller.git"
+        url: "https://github.com/{{ requiredEnv .github.user }}/kubewarden-controller.git"
         branch: "main"
   policyServerGit:
     kind: "git"
     spec:
-        url: "git@github.com:{{ requiredEnv .github.user }}/policy-server.git"
+        url: "https://github.com/{{ requiredEnv .github.user }}/policy-server.git"
         branch: "main"

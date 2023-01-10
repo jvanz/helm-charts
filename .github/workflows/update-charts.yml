@@ -140,6 +140,7 @@ jobs:
     if: needs.check-update-type.outputs.update_type == 'major' || needs.check-update-type.outputs.update_type == 'minor'
     steps:
       - name: Set environment variables
+        # TODO do I need this step?
         uses: actions/github-script@v6
         with:
           script: |
@@ -149,40 +150,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download CRDS
-        uses: actions/github-script@v6
-        with:
-          script: |
-            let repository = context.payload.client_payload.repository
-            if (repository.endsWith("kubewarden-controller")) {
-              let crds_asset_id = context.payload.client_payload.crds_asset_id
-              console.log(`Fetching asset ID: ${crds_asset_id}`)
-              let repository_split = context.payload.client_payload.repository.split("/")
-              let owner = repository_split[0]
-              let repository = repository_split[1]
-              let asset = await github.rest.repos.getReleaseAsset({
-                      owner: owner, repo: repository, asset_id: crds_asset_id, headers:{
-                              accept: "application/octet-stream"},
-              })
-              let fs = require('fs');
-              fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
-            }
-
-      - name: Update CRDS
-        id: update_crds
-        run: |
-          # The next commands are use in the updatecli/scripts/install_crds.sh as well.
-          # Here the commands are used to detect CRDs changes. In the script they are used
-          # to install the CRDs
-          tar -xvf /tmp/crds.tar.gz
-
-          find . -maxdepth 1 -name "*policyserver*" -exec  mv \{\} charts/kubewarden-crds/templates/policyservers.yaml \;
-          find . -maxdepth 1 -name "*admissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/admissionpolicies.yaml \;
-          find . -maxdepth 1 -name "*clusteradmissionpolicies*" -exec  mv \{\} charts/kubewarden-crds/templates/clusteradmissionpolicies.yaml \;
-
-          set +e
-          git diff --exit-code --no-patch charts/kubewarden-crds
-          echo "must_update_crds_chart=$?" >> $GITHUB_OUTPUT
+      # TODO add steps to update CRDs
 
       - name: Install Updatecli in the runner
         uses: updatecli/updatecli-action@v2
+
+      - name: Update Kubewarden charts
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPDATECLI_SEMVERINC_UPDATE: ${{needs.check-update-type.outputs.update_type}}
+        run: "updatecli apply --config ./updatecli/updatecli.d/major-kubewarden-update.yaml --values updatecli/values.yaml"

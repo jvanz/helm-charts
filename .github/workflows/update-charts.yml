@@ -153,13 +153,14 @@ jobs:
             let crds_asset_id = null
             const controller_repo = "kubewarden-controller"
             const version = context.payload.client_payload.version
+            const crds_tarball = "CRDS.tar.gz"
 
             if (repository === controller_repo) {
               crds_asset_id = context.payload.client_payload.crds_asset_id
             } else {
               crds_asset_id = await github.rest.repos.getReleaseByTag({owner: owner, repo:  controller_repo, tag: version,}).then((response) => {
                   for (const file of response.data.assets) {
-                    if (file.name == "CRDS.tar.gz") {
+                    if (file.name == crds_tarball) {
                       return file.id;
                     }
                   }
@@ -174,7 +175,7 @@ jobs:
               let fs = require('fs');
               fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
             } else {
-              core.warning("Aborting chart update. No CRDs found")
+              core.warning(`Aborting chart update: no ${crds_tarball} found. This is expected with the release process in the controller repository is still running. Otherwise, check why the release in the controller does not contains the CRDs tarball`)
               core.setFailed("No CRDs tarball found")
             }
 

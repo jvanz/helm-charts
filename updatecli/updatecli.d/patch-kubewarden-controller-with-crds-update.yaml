@@ -76,7 +76,7 @@ targets:
       file: "file://charts/kubewarden-controller/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
 
-  updateDefaultsAutoInstallAnnotation:
+  updateControllerAutoInstallAnnotation:
     name: "Update kubewarden-controller auto-install annotation"
     kind: yaml
     sourceid: crdChartVersion
@@ -122,7 +122,7 @@ actions:
         REMEMBER TO SQUASH THE COMMIT BEFORE MERGING THIS PR!
       draft: false
       labels:
-        - "kind/enhancement"
+        - "kind/fix"
 
 scms:
   default:

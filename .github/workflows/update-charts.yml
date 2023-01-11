@@ -177,6 +177,7 @@ jobs:
               })
               let fs = require('fs');
               fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
+              console.lof(`${crds_tarball} downloaded successfully`)
             } else {
               core.warning(`Aborting chart update: no ${crds_tarball} found. This is expected if the release process in the controller repository is still running. Otherwise, check why the release in the controller does not contains the CRDs tarball`)
               core.setFailed("No CRDs tarball found")

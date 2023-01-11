@@ -185,7 +185,6 @@ jobs:
 
       - name: Update CRDS
         id: update_crds
-        if: steps.download_crds.outputs.crd_downloaded == 'true'
         run: |
           # The next commands are use in the updatecli/scripts/install_crds.sh as well.
           # Here the commands are used to detect CRDs changes. In the script they are used

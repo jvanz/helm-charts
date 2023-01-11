@@ -158,7 +158,7 @@ jobs:
             } else {
               // check if the CRDs are available to download
               let release = await github.rest.repos.getReleaseByTag({ owner, "kubewarden-controller", context.payload.client_payload.version });
-              let assets = await github.rest.repos.listReleaseAssets({ owner, "kubewarden-controller", release.data.id, });
+              let assets = await github.rest.repos.listReleaseAssets({ owner, "kubewarden-controller", release.data.id });
               for (const file of assets.data) {
                 if (file.name == "CRDS.tar.gz") {
                   crds_asset_id = file.id
@@ -167,9 +167,7 @@ jobs:
             }
             if (crds_asset_id != null) {
               console.log(`Fetching asset ID: ${crds_asset_id}`)
-              let asset = await github.rest.repos.getReleaseAsset({
-                      owner: owner, repository: repository, asset_id: crds_asset_id,
-                      headers:{ accept: "application/octet-stream"}})
+              let asset = await github.rest.repos.getReleaseAsset({ owner: owner, repository: repository, asset_id: crds_asset_id, headers:{ accept: "application/octet-stream"}})
               let fs = require('fs');
               fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
             } else {

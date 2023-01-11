@@ -153,18 +153,20 @@ jobs:
             let crds_asset_id = null
 
             if (repository === "kubewarden-controller") {
-              // The trigger came from the controller repository. Thus, the CRD tarball must be available
               crds_asset_id = context.payload.client_payload.crds_asset_id
-            }
-            //else {
-            //  // check if the CRDs are available to download
-            //  let release = await github.rest.repos.getReleaseByTag({ owner, "kubewarden-controller", context.payload.client_payload.version, });
-            //  let assets = await github.rest.repos.listReleaseAssets({ owner, "kubewarden-controller", release.data.id,});
-            //  for (const file of assets.data) {
-            //    if (file.name == "CRDS.tar.gz") {
-            //      crds_asset_id = file.id
-            //    }
-            //  }
+            } else {
+              let release = await github.rest.repos.getReleaseByTag({
+                owner, "kubewarden-controller",
+                context.payload.client_payload.version,
+              });
+              let assets = await github.rest.repos.listReleaseAssets({
+                owner, "kubewarden-controller", release.data.id,
+              });
+              for (const file of assets.data) {
+                if (file.name == "CRDS.tar.gz") {
+                  crds_asset_id = file.id
+                }
+              }
             //}
             //if (crds_asset_id != null) {
             //  console.log(`Fetching asset ID: ${crds_asset_id}`)

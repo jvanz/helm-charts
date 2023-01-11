@@ -167,7 +167,7 @@ jobs:
             }
             if (crds_asset_id != null) {
               console.log(`Fetching asset ID: ${crds_asset_id}`)
-              let asset = await github.rest.repos.getReleaseAsset({ owner: owner, repository: repository, asset_id: crds_asset_id, headers:{ accept: "application/octet-stream"}})
+              let asset = await github.rest.repos.getReleaseAsset({ owner: owner, repository: repository, asset_id: crds_asset_id, headers:{ accept: "application/octet-stream"},})
               let fs = require('fs');
               fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
             } else {

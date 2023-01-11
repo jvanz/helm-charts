@@ -167,6 +167,16 @@ targets:
       file: "file://charts/kubewarden-defaults/Chart.yaml"
       key: 'annotations.catalog\.cattle\.io/upstream-version'
 
+  updateDefautlsAutoInstallAnnotation:
+    name: "Update kubewarden-defautls auto-install annotation"
+    kind: yaml
+    sourceid: crdChartVersion
+    scmid: "default"
+    spec:
+      file: "file://charts/kubewarden-defaults/Chart.yaml"
+      key: 'annotations.catalog\.cattle\.io/auto-install'
+      value: 'kubewarden-crds={{ source "crdChartVersion" }}'
+
 
   controllerUpdateChartValuesFile:
     name: "Update container image in the chart-values.yaml file"

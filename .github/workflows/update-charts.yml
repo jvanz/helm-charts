@@ -159,10 +159,12 @@ jobs:
             } else {
               let release = await github.rest.repos.getReleaseByTag({owner: owner, repo:  controller_repo, tag: version,});
               console.log(`${release}`)
-              let assets = await github.rest.repos.listReleaseAssets({ owner: owner, repo: controller_repo, release_id: release.data.id })
-              for (const file of assets.data) {
-                if (file.name == "CRDS.tar.gz") {
-                  crds_asset_id = file.id
+              if (release.status === 200) {
+                let assets = await github.rest.repos.listReleaseAssets({ owner: owner, repo: controller_repo, release_id: release.data.id })
+                for (const file of assets.data) {
+                  if (file.name == "CRDS.tar.gz") {
+                    crds_asset_id = file.id
+                  }
                 }
               }
             }

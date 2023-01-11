@@ -147,15 +147,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            let repository = context.payload.client_payload.repository
             let repository_split = context.payload.client_payload.repository.split("/")
             let owner = repository_split[0]
             let repository = repository_split[1]
             let crds_asset_id = null
-            if (repository.endsWith("kubewarden-controller")) {
+
+            if (repository === "kubewarden-controller") {
               // The trigger came from the controller repository. Thus, the CRD tarball must be available
               crds_asset_id = context.payload.client_payload.crds_asset_id
-
             } else {
               // check if the CRDs are available to download
               let release = await github.rest.repos.getReleaseByTag({ owner, "kubewarden-controller", context.payload.client_payload.version });

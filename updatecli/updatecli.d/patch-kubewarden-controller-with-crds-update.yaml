@@ -108,7 +108,7 @@ targets:
 
 actions:
   createUpdatePR:
-    title: "Create PR to update Helm charts"
+    title: "Patch update Helm charts"
     helm-charts:
     kind: "github/pullrequest"
     scmid: "default"
@@ -119,7 +119,7 @@ actions:
         Automatic Helm chart update.
         This PR has been created by the automation used to automatically update the Helm charts when some Kubewarden component is released
 
-        REMEMBER TO SQUASH THE COMMIT BEFORE MERGING THIS PR!
+        REMEMBER IF YOU WANT TO MERGE IN A SINGLE COMMIT CHANGES AND VERSION BUMP, YOU MUST SQUASH THE COMMIT BEFORE MERGING THIS PR!
       draft: false
       labels:
         - "kind/fix"

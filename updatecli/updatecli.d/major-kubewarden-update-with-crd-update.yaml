@@ -217,7 +217,7 @@ targets:
 
 actions:
   createUpdatePR:
-    title: "Create PR to update Helm charts"
+    title: "{{ requiredEnv .semverinc }} update Helm charts"
     helm-charts:
     kind: "github/pullrequest"
     scmid: "default"

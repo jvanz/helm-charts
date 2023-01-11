@@ -171,11 +171,14 @@ jobs:
             }
             console.log(`Fetching asset ID: ${crds_asset_id}`)
             if (crds_asset_id != null) {
-              let asset = await github.rest.repos.getReleaseAsset({ owner: owner, repository: repository, asset_id: crds_asset_id, headers:{ accept: "application/octet-stream"},})
+              let asset = await github.rest.repos.getReleaseAsset({
+                      owner: owner, repo: controller_repo, asset_id: crds_asset_id, headers:{
+                              accept: "application/octet-stream"},
+              })
               let fs = require('fs');
               fs.writeFileSync("/tmp/crds.tar.gz", Buffer.from(asset.data))
             } else {
-              core.warning(`Aborting chart update: no ${crds_tarball} found. This is expected with the release process in the controller repository is still running. Otherwise, check why the release in the controller does not contains the CRDs tarball`)
+              core.warning(`Aborting chart update: no ${crds_tarball} found. This is expected if the release process in the controller repository is still running. Otherwise, check why the release in the controller does not contains the CRDs tarball`)
               core.setFailed("No CRDs tarball found")
             }
 
@@ -212,7 +215,15 @@ jobs:
       - name: Install Updatecli in the runner
         uses: updatecli/updatecli-action@v2
 
-      - name: Update Kubewarden charts
+      - name: Update Kubewarden charts with NO CRDs update
+        if: steps.update_crds.outputs.must_update_crds_chart==0
+        env:
+          UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPDATECLI_SEMVERINC_UPDATE: ${{needs.check-update-type.outputs.update_type}}
+        run: "updatecli apply --config ./updatecli/updatecli.d/major-kubewarden-update.yaml --values updatecli/values.yaml"
+
+      - name: Update Kubewarden charts WITH CRDs update
+        if: steps.update_crds.outputs.must_update_crds_chart==1
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPDATECLI_SEMVERINC_UPDATE: ${{needs.check-update-type.outputs.update_type}}

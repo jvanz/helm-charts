@@ -151,11 +151,12 @@ jobs:
             let owner = repository_split[0]
             let repository = repository_split[1]
             let crds_asset_id = null
+            const controller_repo = "kubewarden-controller";
 
-            if (repository === "kubewarden-controller") {
+            if (repository === controller_repo) {
               crds_asset_id = context.payload.client_payload.crds_asset_id
             } else {
-              let release = await github.rest.repos.getReleaseByTag({owner, 'kubewarden-controller', context.payload.client_payload.version,});
+              let release = await github.rest.repos.getReleaseByTag({owner, controller_repo, context.payload.client_payload.version,});
 
               //let assets = await github.rest.repos.listReleaseAssets({
               //  owner, "kubewarden-controller", release.data.id

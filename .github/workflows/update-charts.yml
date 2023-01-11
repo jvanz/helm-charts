@@ -155,9 +155,9 @@ jobs:
 
             if (repository === controller_repo) {
               crds_asset_id = context.payload.client_payload.crds_asset_id
+            } else {
+              let release = await github.rest.repos.getReleaseByTag({owner, controller_repo, context.payload.client_payload.version,});
             }
-            //else {
-            //  let release = await github.rest.repos.getReleaseByTag({owner, controller_repo, context.payload.client_payload.version,});
 
             //  //let assets = await github.rest.repos.listReleaseAssets({
             //  //  owner, "kubewarden-controller", release.data.id
@@ -167,7 +167,6 @@ jobs:
             //  //    crds_asset_id = file.id
             //  //  }
             //  //}
-            //}
             ////if (crds_asset_id != null) {
             ////  console.log(`Fetching asset ID: ${crds_asset_id}`)
             ////  let asset = await github.rest.repos.getReleaseAsset({ owner: owner, repository: repository, asset_id: crds_asset_id, headers:{ accept: "application/octet-stream"},})

@@ -176,18 +176,13 @@ jobs:
               crds_asset_id = context.payload.client_payload.crds_asset_id
             } else {
               crds_asset_id = await github.rest.repos.getReleaseByTag({owner: owner, repo:  controller_repo, tag: version,}).then((response) => {
-                  console.log(response)
                   for (const file of response.data.assets) {
-                    console.log("------------------------------------------------------------------------")
-                    console.log(`${file}`)
                     if (file.name == crds_tarball) {
                       return file.id;
                     }
                   }
                   return null;
               }, (failedResponse) => {
-                      console.log("Oooooooooooooooooooooooooooops")
-                      console.log(`${failedResponse}`)
                       return null;
               });
             }

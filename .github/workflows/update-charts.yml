@@ -149,13 +149,14 @@ jobs:
             let repository_split = context.payload.client_payload.repository.split("/")
             let owner = repository_split[0]
             const version = context.payload.client_payload.version
+            let repos = ['kubewarden-controller', 'policy-server', 'kwctl']
 
-            try {
-              await github.rest.repos.getReleaseByTag({owner: owner, repo: "kubewarden-controller", tag: version,})
-              await github.rest.repos.getReleaseByTag({owner: owner, repo: "policy-server", tag: version,})
-              await github.rest.repos.getReleaseByTag({owner: owner, repo: "kwctl", tag: version,})
-            } catch (e) {
-                core.setFailed(`There is a Kubewarden component missing a release for the tag ${version}: ${e}`)
+            for (const repo of repos) {
+              try {
+                await github.rest.repos.getReleaseByTag({owner: owner, repo: repo, tag: version,})
+              } catch (e) {
+                  core.setFailed(`${repo} is missing a release for the tag ${version}`)
+              }
             }
 
       - name: Check if CRD are available in the Kubewarden controller

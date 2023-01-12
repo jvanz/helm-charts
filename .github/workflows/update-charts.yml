@@ -155,8 +155,7 @@ jobs:
               await github.rest.repos.getReleaseByTag({owner: owner, repo: "policy-server", tag: version,})
               await github.rest.repos.getReleaseByTag({owner: owner, repo: "kwctl", tag: version,})
             } catch (e) {
-              core.setFailed(`There is a Kubewarden component missing a release for the tag ${version}`)
-
+                core.setFailed(`There is a Kubewarden component missing a release for the tag ${version}: ${e}`)
             }
 
       - name: Check if CRD are available in the Kubewarden controller

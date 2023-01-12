@@ -142,6 +142,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Check if all components has a release with the same tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let repository_split = context.payload.client_payload.repository.split("/")
+            let owner = repository_split[0]
+            const version = context.payload.client_payload.version
+
+            try {
+              await github.rest.repos.getReleaseByTag({owner: owner, repo: "kubewarden-controller", tag: version,})
+              await github.rest.repos.getReleaseByTag({owner: owner, repo: "policy-server", tag: version,})
+              await github.rest.repos.getReleaseByTag({owner: owner, repo: "kwctl", tag: version,})
+            } catch (e) {
+              core.setFailed(`There is a Kubewarden component missing a release for the tag ${version}`)
+
+            }
+
       - name: Check if CRD are available in the Kubewarden controller
         id: download_crds
         uses: actions/github-script@v6

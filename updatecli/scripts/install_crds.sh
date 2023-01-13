@@ -7,4 +7,3 @@ find . -maxdepth 1 -name "*_clusteradmissionpolicies*" -exec  mv \{\} /tmp/helm-
 
 # updatecli expects something in the stdout when a change happen.
 echo "Changed!"
-

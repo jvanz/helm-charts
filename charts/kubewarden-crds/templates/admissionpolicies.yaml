@@ -231,6 +231,9 @@ spec:
                   need to be undone. Requests with the dryRun attribute will be auto-rejected
                   if they match a webhook with sideEffects == Unknown or Some.'
                 type: string
+              testing:
+                description: field created to test crds updates
+                type: string
               timeoutSeconds:
                 default: 10
                 description: TimeoutSeconds specifies the timeout for this webhook.

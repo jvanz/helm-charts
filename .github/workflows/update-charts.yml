@@ -133,7 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check-update-type
-    if: needs.check-update-type.outputs.update_type == 'major' || needs.check-update-type.outputs.update_type == 'minor'
+    if: needs.check-update-type.outputs.update_type == 'major' || needs.check-update-type.outputs.update_type == 'minor' || needs.check-update-type.outputs.update_type == 'prerelease'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

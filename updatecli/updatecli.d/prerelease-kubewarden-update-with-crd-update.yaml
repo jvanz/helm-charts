@@ -5,6 +5,8 @@ sources:
     name: Load chart version
     kind: yaml
     transformers:
+      - findsubmatch:
+          pattern: '^\d+.\d+.\d+'
       - addsuffix: '{{ requiredEnv .prerelease_suffix }}'
       - trimsuffix: ' '
     spec:
@@ -41,6 +43,8 @@ sources:
     name: Load controller chart version
     kind: yaml
     transformers:
+      - findsubmatch:
+          pattern: '^\d+.\d+.\d+'
       - addsuffix: '{{ requiredEnv .prerelease_suffix }}'
       - trimsuffix: ' '
     spec:
@@ -62,6 +66,8 @@ sources:
   crdChartVersion:
     kind: yaml
     transformers:
+      - findsubmatch:
+          pattern: '^\d+.\d+.\d+'
       - addsuffix: '{{ requiredEnv .prerelease_suffix }}'
       - trimsuffix: ' '
     spec:

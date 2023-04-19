@@ -5,9 +5,8 @@ sources:
     name: Load chart version
     kind: yaml
     transformers:
-      - findSubMatch:
-          pattern: '\d+\.\d+\.\d+'
-          captureindex: 1
+      - findsubmatch:
+          pattern: '^\d+.\d+.\d+'
       - addsuffix: '{{ requiredEnv .prerelease_suffix }}'
       - trimsuffix: ' '
     spec:
@@ -44,9 +43,8 @@ sources:
     name: Load controller chart version
     kind: yaml
     transformers:
-      - findSubMatch:
-          pattern: '\d+\.\d+\.\d+'
-          captureindex: 1
+      - findsubmatch:
+          pattern: '^\d+.\d+.\d+'
       - addsuffix: '{{ requiredEnv .prerelease_suffix }}'
       - trimsuffix: ' '
     spec:

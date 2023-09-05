@@ -127,6 +127,7 @@ resources:
 replicas: 1
 auditScanner:
   enable: true
+  policyReporter: false
   # The default audit-scanner ServiceAccount is bound to the ClusterRoles:
   # - view: Allows read-only access to most objects in a namespace.
   #   Does not allow viewing secrets, roles or role bindings.
@@ -146,3 +147,8 @@ auditScanner:
   containerRestartPolicy: Never
   # Additional namespaces that the audit scanner will not scan:
   skipAdditionalNamespaces: []
+
+policy-reporter:
+  ui:
+    enabled: true
+

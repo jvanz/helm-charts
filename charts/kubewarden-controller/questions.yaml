@@ -115,19 +115,56 @@ questions:
       Number of replicas of the Controller Deployment
     group: "Controller HA"
   - variable: "global.tolerations"
-    type: yaml
+    type: sequence[
     label: Tolerations
     description: |
       Array of Tolerations to be applied to the Controller Deployment and Audit Scanner CronJob. 
       Each element of the array should be a valid Kubernetes Tolerations object.
     group: "Scheduling"
-  - variable: "global.affinity"
-    type: yaml
-    label: Affinity and Anti-affinity
-    description: |
-      Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
-      The YAML should be a valid Kubernetes Affinity object.
-    group: "Scheduling"
+    default: []
+    sequence_questions:
+      - variable: "effect"
+        type: "enum"
+        options:
+          - "NoSchedule"
+          - "PreferNoSchedule"
+          - "NoExecute"
+        tooltip: "Effect of the Tolerations"
+        label: "Effect"
+        group: "Scheduling"
+        default: ""
+      - variable: "key"
+        type: "string"
+        tooltip: "Key to match against"
+        label: "Key"
+        group: "Scheduling"
+        default: ""
+      - variable: "operator"
+        type: "string"
+        tooltip: "Toleration operator"
+        label: "Operator"
+        group: "Scheduling"
+        default: ""
+      - variable: "tolerationSeconds"
+        type: "int"
+        tooltip: "Seconds to match the corresponding key"
+        label: "Toleration Seconds"
+        group: "Scheduling"
+        default: ""
+      - variable: "value"
+        type: "string"
+        tooltip: "To match the corresponding key"
+        label: "Value"
+        group: "Scheduling"
+        default: ""
+
+  # - variable: "global.affinity"
+  #   type: yaml
+  #   label: Affinity and Anti-affinity
+  #   description: |
+  #     Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
+  #     The YAML should be a valid Kubernetes Affinity object.
+  #   group: "Scheduling"
   # Certificates:
   - variable: tls.source
     default: "cert-manager-self-signed"

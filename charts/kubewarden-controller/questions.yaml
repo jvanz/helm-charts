@@ -124,14 +124,15 @@ questions:
     subquestions:
       - variable: "global.affinity.nodeAffinity"
         type: map[
+        hide_input: true
         label: Node Affinity
         description: |
           Node affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
         default: {}
-        group: "Node Affinity"
         subquestions:
           - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution"
             type: map[
+            hide_input: true
             label: Required During Scheduling Ignored During Execution
             description: |
               Array of NodeSelectorTerms, which are used to determine on which nodes the Controller Deployment and Audit Scanner CronJob should be scheduled.
@@ -208,6 +209,7 @@ questions:
     description: |
       Array of Tolerations to be applied to the Controller Deployment and Audit Scanner CronJob. 
     default: []
+    group: "Scheduling"
     sequence_questions:
       - variable: "effect"
         type: "enum"
@@ -217,33 +219,27 @@ questions:
           - "NoExecute"
         tooltip: "Effect of the Tolerations"
         label: "Effect"
-        group: "Scheduling"
         default: ""
       - variable: "key"
         type: "string"
         tooltip: "Key to match against"
         label: "Key"
-        group: "Scheduling"
         default: ""
       - variable: "operator"
         type: "string"
         tooltip: "Toleration operator"
         label: "Operator"
-        group: "Scheduling"
         default: ""
       - variable: "tolerationSeconds"
         type: "int"
         tooltip: "Seconds to match the corresponding key"
         label: "Toleration Seconds"
-        group: "Scheduling"
         default: ""
       - variable: "value"
         type: "string"
         tooltip: "To match the corresponding key"
         label: "Value"
-        group: "Scheduling"
         default: ""
-    group: "Scheduling"
   # Certificates:
   - variable: tls.source
     default: "cert-manager-self-signed"

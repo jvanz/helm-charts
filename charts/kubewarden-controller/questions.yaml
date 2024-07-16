@@ -125,7 +125,7 @@ questions:
     - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
       type: sequence[
       hide_input: true
-      label: Node affinity: Required During Scheduling Ignored During Execution Node Selector Terms
+      label: "Node affinity: Required During Scheduling Ignored During Execution Node Selector Terms"
       description: |
         Array of node selector requirements by node's labels.
       default: []

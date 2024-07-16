@@ -114,81 +114,74 @@ questions:
     description: |
       Number of replicas of the Controller Deployment
     group: "Controller HA"
-  - variable: "global.affinity"
-    type: map[
-    label: Affinity and Anti-affinity
+
+  - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
+    type: sequence[
+    hide_input: false
+    label: "Node affinity: Required During Scheduling Ignored During Execution Node Selector Terms"
     description: |
-      Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
-    default: {}
-    group: "Scheduling"
-    subquestions:
-    - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
-      type: sequence[
-      hide_input: true
-      label: "Node affinity: Required During Scheduling Ignored During Execution Node Selector Terms"
-      description: |
-        Array of node selector requirements by node's labels.
-      default: []
-      sequence_questions:
-        - variable: "matchExpressions"
-          hide_input: false
-          type: sequence[
-          label: Match Expressions
-          description: |
-            Array of node selector requirements by node's labels.
-          default: []
-          sequence_questions:
-            - variable: "key"
-              type: "string"
-              tooltip: "The label key that the selector applies to"
-              label: "Key"
-              default: ""
-            - variable: "operator"
-              type: "enum"
-              options:
-                - "In"
-                - "NotIn"
-                - "Exists"
-                - "DoesNotExist"
-                - "Gt"
-                - "Lt"
-              tooltip: "The operator that relates the key and values"
-              label: "Operator"
-              default: ""
-            - variable: "values"
-              type: "sequence"
-              tooltip: "An array of string values"
-              label: "Values"
-              default: []
-        - variable: "matchFields"
-          type: sequence[
-          label: Match Fields
-          description: |
-            Array of node selector requirements by node's fields.
-          default: []
-          sequence_questions:
-            - variable: "key"
-              type: "string"
-              tooltip: "The field name that the selector applies to"
-              label: "Key"
-              default: ""
-            - variable: "operator"
-              type: "enum"
-              options:
-                - "In"
-                - "NotIn"
-                - "Exists"
-                - "DoesNotExist"
-                - "Gt"
-                - "Lt"
-              tooltip: "The operator that relates the key and values"
-              label: "Operator"
-              default: ""
-            - variable: "values"
-              type: "sequence"
-              tooltip: "An array of string values"
-              label: "Values"
-              default: []
+      Array of node selector requirements by node's labels.
+    default: []
+    sequence_questions:
+      - variable: "matchExpressions"
+        hide_input: 
+        type: sequence[
+        label: Match Expressions
+        description: |
+          Array of node selector requirements by node's labels.
+        default: []
+        sequence_questions:
+          - variable: "key"
+            type: "string"
+            tooltip: "The label key that the selector applies to"
+            label: "Key"
+            default: ""
+          - variable: "operator"
+            type: "enum"
+            options:
+              - "In"
+              - "NotIn"
+              - "Exists"
+              - "DoesNotExist"
+              - "Gt"
+              - "Lt"
+            tooltip: "The operator that relates the key and values"
+            label: "Operator"
+            default: ""
+          - variable: "values"
+            type: "sequence"
+            tooltip: "An array of string values"
+            label: "Values"
+            default: []
+      - variable: "matchFields"
+        type: sequence[
+        label: Match Fields
+        description: |
+          Array of node selector requirements by node's fields.
+        default: []
+        sequence_questions:
+          - variable: "key"
+            type: "string"
+            tooltip: "The field name that the selector applies to"
+            label: "Key"
+            default: ""
+          - variable: "operator"
+            type: "enum"
+            options:
+              - "In"
+              - "NotIn"
+              - "Exists"
+              - "DoesNotExist"
+              - "Gt"
+              - "Lt"
+            tooltip: "The operator that relates the key and values"
+            label: "Operator"
+            default: ""
+          - variable: "values"
+            type: "sequence"
+            tooltip: "An array of string values"
+            label: "Values"
+            default: []
   # - variable: "global.tolerations"
   #   type: sequence[
   #   label: Tolerations

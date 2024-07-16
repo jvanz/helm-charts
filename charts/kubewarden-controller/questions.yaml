@@ -131,7 +131,7 @@ questions:
       default: []
       sequence_questions:
         - variable: "matchExpressions"
-          hide_input: true
+          hide_input: false
           type: sequence[
           label: Match Expressions
           description: |

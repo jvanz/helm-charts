@@ -131,82 +131,73 @@ questions:
         default: {}
         group: "Scheduling"
         subquestions:
-          - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution"
-            type: map[
+          - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
+            type: sequence[
             hide_input: true
-            label: Required During Scheduling Ignored During Execution
+            label: Required During Scheduling Ignored During Execution Node Selector Terms
             description: |
-              Array of NodeSelectorTerms, which are used to determine on which nodes the Controller Deployment and Audit Scanner CronJob should be scheduled.
-            default: {}
+              Array of node selector requirements by node's labels.
+            default: []
             group: "Scheduling"
-            subquestions:
-              - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
+            sequence_questions:
+              - variable: "matchExpressions"
                 type: sequence[
-                hide_input: true
-                label: Required During Scheduling Ignored During Execution Node Selector Terms
+                label: Match Expressions
                 description: |
-                  Array of node selector requirements by node's labels.
+                  Array of match expressions .
                 default: []
-                group: "Scheduling"
                 sequence_questions:
-                  - variable: "matchExpressions"
-                    type: sequence[
-                    label: Match Expressions
-                    description: |
-                      Array of match expressions .
+                  - variable: "key"
+                    type: "string"
+                    tooltip: "The label key that the selector applies to"
+                    label: "Key"
+                    default: ""
+                  - variable: "operator"
+                    type: "enum"
+                    options:
+                      - "In"
+                      - "NotIn"
+                      - "Exists"
+                      - "DoesNotExist"
+                      - "Gt"
+                      - "Lt"
+                    tooltip: "The operator that relates the key and values"
+                    label: "Operator"
+                    default: ""
+                  - variable: "values"
+                    type: "sequence"
+                    tooltip: "An array of string values"
+                    label: "Values"
                     default: []
-                    sequence_questions:
-                      - variable: "key"
-                        type: "string"
-                        tooltip: "The label key that the selector applies to"
-                        label: "Key"
-                        default: ""
-                      - variable: "operator"
-                        type: "enum"
-                        options:
-                          - "In"
-                          - "NotIn"
-                          - "Exists"
-                          - "DoesNotExist"
-                          - "Gt"
-                          - "Lt"
-                        tooltip: "The operator that relates the key and values"
-                        label: "Operator"
-                        default: ""
-                      - variable: "values"
-                        type: "sequence"
-                        tooltip: "An array of string values"
-                        label: "Values"
-                        default: []
-                  - variable: "matchFields"
-                    type: sequence[
-                    label: Match Fields
-                    description: |
-                      Array of node selector requirements by node's fields.
+              - variable: "matchFields"
+                type: sequence[
+                label: Match Fields
+                description: |
+                  Array of node selector requirements by node's fields.
+                default: []
+                sequence_questions:
+                  - variable: "key"
+                    type: "string"
+                    tooltip: "The label key that the selector applies to"
+                    label: "Key"
+                    default: ""
+                  - variable: "operator"
+                    type: "enum"
+                    options:
+                      - "In"
+                      - "NotIn"
+                      - "Exists"
+                      - "DoesNotExist"
+                      - "Gt"
+                      - "Lt"
+                    tooltip: "The operator that relates the key and values"
+                    label: "Operator"
+                    default: ""
+                  - variable: "values"
+                    type: "sequence"
+                    tooltip: "An array of string values"
+                    label: "Values"
                     default: []
-                    sequence_questions:
-                      - variable: "key"
-                        type: "string"
-                        tooltip: "The label key that the selector applies to"
-                        label: "Key"
-                        default: ""
-                      - variable: "operator"
-                        type: "enum"
-                        options:
-                          - "In"
-                          - "NotIn"
-                          - "Exists"
-                          - "DoesNotExist"
-                          - "Gt"
-                          - "Lt"
-                        tooltip: "The operator that relates the key and values"
-                        label: "Operator"
-                        default: ""
-                      - variable: "values"
-                        type: "sequence"
-                        tooltip: "An array of string values"
-                        label: "Values"
-                        default: []
   # - variable: "global.tolerations"
   #   type: sequence[
   #   label: Tolerations

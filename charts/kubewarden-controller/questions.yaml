@@ -120,24 +120,26 @@ questions:
     description: |
       Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
     default: {}
+    group: "Scheduling"
     subquestions:
-      - variable: "nodeAffinity"
+      - variable: "global.affinity.nodeAffinity"
         type: map[
         label: Node Affinity
         description: |
           Node affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
         default: {}
+        group: "Node Affinity"
         subquestions:
-          - variable: "requiredDuringSchedulingIgnoredDuringExecution"
+          - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution"
             type: map[
             label: Required During Scheduling Ignored During Execution
             description: |
               Array of NodeSelectorTerms, which are used to determine on which nodes the Controller Deployment and Audit Scanner CronJob should be scheduled.
             default: {}
             subquestions:
-              - variable: "nodeSelectorTerms"
+              - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
                 type: sequence[
-                label: Node Selector Terms
+                label: Required During Scheduling Ignored During Execution
                 description: |
                   Array of node selector requirements by node's labels.
                 default: []
@@ -171,7 +173,6 @@ questions:
                         tooltip: "An array of string values"
                         label: "Values"
                         default: []
-                    group: "Node Affinity"
                   - variable: "matchFields"
                     type: sequence[
                     label: Match Fields
@@ -201,8 +202,6 @@ questions:
                         tooltip: "An array of string values"
                         label: "Values"
                         default: []
-                    group: "Node Affinity"
-    group: "Scheduling"
   - variable: "global.tolerations"
     type: sequence[
     label: Tolerations

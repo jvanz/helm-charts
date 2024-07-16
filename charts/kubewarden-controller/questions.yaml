@@ -129,6 +129,7 @@ questions:
         description: |
           Node affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
         default: {}
+        group: "Scheduling"
         subquestions:
           - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution"
             type: map[
@@ -137,13 +138,16 @@ questions:
             description: |
               Array of NodeSelectorTerms, which are used to determine on which nodes the Controller Deployment and Audit Scanner CronJob should be scheduled.
             default: {}
+            group: "Scheduling"
             subquestions:
               - variable: "global.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms"
                 type: sequence[
-                label: Required During Scheduling Ignored During Execution
+                hide_input: true
+                label: Required During Scheduling Ignored During Execution Node Selector Terms
                 description: |
                   Array of node selector requirements by node's labels.
                 default: []
+                group: "Scheduling"
                 sequence_questions:
                   - variable: "matchExpressions"
                     type: sequence[
@@ -203,43 +207,43 @@ questions:
                         tooltip: "An array of string values"
                         label: "Values"
                         default: []
-  - variable: "global.tolerations"
-    type: sequence[
-    label: Tolerations
-    description: |
-      Array of Tolerations to be applied to the Controller Deployment and Audit Scanner CronJob. 
-    default: []
-    group: "Scheduling"
-    sequence_questions:
-      - variable: "effect"
-        type: "enum"
-        options:
-          - "NoSchedule"
-          - "PreferNoSchedule"
-          - "NoExecute"
-        tooltip: "Effect of the Tolerations"
-        label: "Effect"
-        default: ""
-      - variable: "key"
-        type: "string"
-        tooltip: "Key to match against"
-        label: "Key"
-        default: ""
-      - variable: "operator"
-        type: "string"
-        tooltip: "Toleration operator"
-        label: "Operator"
-        default: ""
-      - variable: "tolerationSeconds"
-        type: "int"
-        tooltip: "Seconds to match the corresponding key"
-        label: "Toleration Seconds"
-        default: ""
-      - variable: "value"
-        type: "string"
-        tooltip: "To match the corresponding key"
-        label: "Value"
-        default: ""
+  # - variable: "global.tolerations"
+  #   type: sequence[
+  #   label: Tolerations
+  #   description: |
+  #     Array of Tolerations to be applied to the Controller Deployment and Audit Scanner CronJob. 
+  #   default: []
+  #   group: "Scheduling"
+  #   sequence_questions:
+  #     - variable: "effect"
+  #       type: "enum"
+  #       options:
+  #         - "NoSchedule"
+  #         - "PreferNoSchedule"
+  #         - "NoExecute"
+  #       tooltip: "Effect of the Tolerations"
+  #       label: "Effect"
+  #       default: ""
+  #     - variable: "key"
+  #       type: "string"
+  #       tooltip: "Key to match against"
+  #       label: "Key"
+  #       default: ""
+  #     - variable: "operator"
+  #       type: "string"
+  #       tooltip: "Toleration operator"
+  #       label: "Operator"
+  #       default: ""
+  #     - variable: "tolerationSeconds"
+  #       type: "int"
+  #       tooltip: "Seconds to match the corresponding key"
+  #       label: "Toleration Seconds"
+  #       default: ""
+  #     - variable: "value"
+  #       type: "string"
+  #       tooltip: "To match the corresponding key"
+  #       label: "Value"
+  #       default: ""
   # Certificates:
   - variable: tls.source
     default: "cert-manager-self-signed"

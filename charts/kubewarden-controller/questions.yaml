@@ -114,13 +114,100 @@ questions:
     description: |
       Number of replicas of the Controller Deployment
     group: "Controller HA"
+  - variable: "global.affinity"
+    type: map[
+    label: Affinity and Anti-affinity
+    description: |
+      Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
+    default: {}
+    subquestions:
+      - variable: "nodeAffinity"
+        type: map[
+        label: Node Affinity
+        description: |
+          Node affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
+        default: {}
+        subquestions:
+          - variable: "requiredDuringSchedulingIgnoredDuringExecution"
+            type: map[
+            label: Required During Scheduling Ignored During Execution
+            description: |
+              Array of NodeSelectorTerms, which are used to determine on which nodes the Controller Deployment and Audit Scanner CronJob should be scheduled.
+            default: {}
+            subquestions:
+              - variable: "nodeSelectorTerms"
+                type: sequence[
+                label: Node Selector Terms
+                description: |
+                  Array of node selector requirements by node's labels.
+                default: []
+                sequence_questions:
+                  - variable: "matchExpressions"
+                    type: sequence[
+                    label: Match Expressions
+                    description: |
+                      Array of match expressions .
+                    default: []
+                    sequence_questions:
+                      - variable: "key"
+                        type: "string"
+                        tooltip: "The label key that the selector applies to"
+                        label: "Key"
+                        default: ""
+                      - variable: "operator"
+                        type: "enum"
+                        options:
+                          - "In"
+                          - "NotIn"
+                          - "Exists"
+                          - "DoesNotExist"
+                          - "Gt"
+                          - "Lt"
+                        tooltip: "The operator that relates the key and values"
+                        label: "Operator"
+                        default: ""
+                      - variable: "values"
+                        type: "sequence"
+                        tooltip: "An array of string values"
+                        label: "Values"
+                        default: []
+                    group: "Node Affinity"
+                  - variable: "matchFields"
+                    type: sequence[
+                    label: Match Fields
+                    description: |
+                      Array of node selector requirements by node's fields.
+                    default: []
+                    sequence_questions:
+                      - variable: "key"
+                        type: "string"
+                        tooltip: "The label key that the selector applies to"
+                        label: "Key"
+                        default: ""
+                      - variable: "operator"
+                        type: "enum"
+                        options:
+                          - "In"
+                          - "NotIn"
+                          - "Exists"
+                          - "DoesNotExist"
+                          - "Gt"
+                          - "Lt"
+                        tooltip: "The operator that relates the key and values"
+                        label: "Operator"
+                        default: ""
+                      - variable: "values"
+                        type: "sequence"
+                        tooltip: "An array of string values"
+                        label: "Values"
+                        default: []
+                    group: "Node Affinity"
+    group: "Scheduling"
   - variable: "global.tolerations"
     type: sequence[
     label: Tolerations
     description: |
       Array of Tolerations to be applied to the Controller Deployment and Audit Scanner CronJob. 
-      Each element of the array should be a valid Kubernetes Tolerations object.
-    group: "Scheduling"
     default: []
     sequence_questions:
       - variable: "effect"
@@ -157,14 +244,7 @@ questions:
         label: "Value"
         group: "Scheduling"
         default: ""
-
-  # - variable: "global.affinity"
-  #   type: yaml
-  #   label: Affinity and Anti-affinity
-  #   description: |
-  #     Affinity and Anti-affinity rules to be applied to the Controller Deployment and Audit Scanner CronJob.
-  #     The YAML should be a valid Kubernetes Affinity object.
-  #   group: "Scheduling"
+    group: "Scheduling"
   # Certificates:
   - variable: tls.source
     default: "cert-manager-self-signed"

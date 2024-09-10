@@ -14,6 +14,14 @@
 {{ $caCert = (index $caSecret.data "ca.crt") }}
 {{ $caPrivateKey = (index $caSecret.data "ca.key") }}
 {{ $oldCaCert = (index $caSecret.data "old-ca.crt") }}
+# Check if the old CA certificate is missing. If so, set it to "". This is to
+# avoid issues with b64dec when the old CA certificate is not present in the
+# secret. This can happen after an upgrade. The old CA field is removed from
+# the secret because it's empty. Therefore, a future upgrade can fail.
+{{ if not $oldCaCert }}
+# Missing old CA certificate. Using "" to avoid issue with b64dec
+{{ $oldCaCert = "" }}
+{{ end }}
 {{ $caBundle = printf "%s%s" ($caCert | b64dec) ($oldCaCert | b64dec) | b64enc }}
 {{ end }}
 {{ $serverCertSecret := (lookup "v1" "Secret" .Release.Namespace "kubewarden-webhook-server-cert") }}

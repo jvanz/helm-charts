@@ -80,13 +80,60 @@ jobs:
           helm repo add policy-reporter https://kyverno.github.io/policy-reporter
           helm repo update
 
-      - name: Run chart-releaser
+      - name: Install chart-releaser
         uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
         with:
-          charts_dir: charts
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          CR_SKIP_EXISTING: true
+          install_only: true
+
+      # - name: Run chart-releaser
+      #   uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
+      #   with:
+      #     charts_dir: charts
+      #   env:
+      #     CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #     CR_SKIP_EXISTING: true
+      #
+      - name: Release Helm charts
+        shell: bash
+        run: |
+          set -e
+          
+          OWNER=${{ github.repository_owner }}
+          REPO=helm-charts
+          CONFIG_FILE=cr.yaml
+          PACKAGE_PATH=.cr-release-packages
+          CR_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          
+          rm -rf ${PACKAGE_PATH}
+          # Release each chart in the charts directory
+          for chart in $(find charts -maxdepth 1 -mindepth 1  -type d ); do
+            chart_name=$(basename $chart)
+            chart_path=${PACKAGE_PATH}/${chart_name}-*.tgz
+          
+            cr package charts/${chart_name} --config ${CONFIG_FILE} --package-path ${PACKAGE_PATH}
+          
+            # check if the chart version is already release. If so, do nothing
+            chart_version=$(helm show chart $chart_path | yq -r '.version')
+            if gh --repo ${OWNER}/${REPO} release view $chart_name-$chart_version; then
+              echo "Chart $chart_name-$chart_version already released. No need to release again."
+              rm $chart_path
+              continue
+            fi
+          
+          done
+          
+          # Upload the charts if the .cr-release-packages directory is not empty
+          if [ "$(ls ${PACKAGE_PATH})" ]; then
+            # Upload the chart to the GitHub release
+            cr upload --config ${CONFIG_FILE} -o ${OWNER} -r ${REPO} -c "$(git rev-parse HEAD)" --skip-existing  --make-release-latest=false --token ${CR_TOKEN} --push 
+            echo "Charts released!"
+            
+            # Reindex the repository
+            cr index --config ${CONFIG_FILE} -o ${OWNER} -r ${REPO} --push --token ${CR_TOKEN} --index-path .
+            echo "Repository indexed!"
+          fi
+
+
 
       - name: Prepare GH pages readme
         run: |

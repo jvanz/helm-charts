@@ -131,14 +131,19 @@ jobs:
             for chart_path in $(find ${PACKAGE_PATH} -maxdepth 1 -mindepth 1 ); do
               echo "Pushing chart $chart_path to ghcr.io"
               chart_name=$(helm show chart ${chart_path} | yq ".name")
-            
+              echo "chart_name = $chart_name"
               REGISTRY="ghcr.io/$GITHUB_REPOSITORY_OWNER/charts"
               echo "REGISTRY=${REGISTRY}" >> "$GITHUB_ENV"
+              echo "REGISTRY=${REGISTRY}"
               push_output=$(helm push $chart_path "oci://$REGISTRY" 2>&1)
+              echo "push_output = $push_output"
               chart_url=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\1\@\2/p')
+              echo "chart_url = $chart_url"
               digest=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\2/p')
+              echo "digest = $digest"
               echo "DIGEST_${chart_name}=${digest}" >> "$GITHUB_ENV"
               cosign sign --yes "$chart_url"
+              echo "Chart $chart_name signed and pushed to ghcr.io"
             done
           fi
 

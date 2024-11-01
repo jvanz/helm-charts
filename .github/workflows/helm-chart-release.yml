@@ -127,24 +127,25 @@ jobs:
             cr index --config ${CONFIG_FILE} -o ${OWNER} -r ${REPO} --push --token ${CR_TOKEN} --index-path .
             echo "Repository indexed!"
 
-          # Publish the charts to the OCI registry and sign them
-          for chart in $(find charts -maxdepth 1 -mindepth 1  -type d ); do
-            chart_name=$(basename $chart)
-            chart_path=${PACKAGE_PATH}/${chart_name}-*.tgz
-          
-            if [ ! -f $chart_path ]; then
-              echo "$chart_path does not exist. Assuming no charts update"
-              continue
-            fi
+            # Publish the charts to the OCI registry and sign them
+            for chart in $(find charts -maxdepth 1 -mindepth 1  -type d ); do
+              chart_name=$(basename $chart)
+              chart_path=${PACKAGE_PATH}/${chart_name}-*.tgz
+            
+              if [ ! -f $chart_path ]; then
+                echo "$chart_path does not exist. Assuming no charts update"
+                continue
+              fi
 
-            REGISTRY="ghcr.io/$GITHUB_REPOSITORY_OWNER/charts"
-            echo "REGISTRY=${REGISTRY}" >> "$GITHUB_ENV"
-            push_output=$(helm push $chart_path "oci://$REGISTRY" 2>&1)
-            chart_url=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\1\@\2/p')
-            digest=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\2/p')
-            echo "DIGEST_${chart_name}=${digest}" >> "$GITHUB_ENV"
-            cosign sign --yes "$chart_url"
-          done
+              REGISTRY="ghcr.io/$GITHUB_REPOSITORY_OWNER/charts"
+              echo "REGISTRY=${REGISTRY}" >> "$GITHUB_ENV"
+              push_output=$(helm push $chart_path "oci://$REGISTRY" 2>&1)
+              chart_url=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\1\@\2/p')
+              digest=$(echo $push_output | sed -n 's/Pushed: \(.*\):.* Digest: \(.*\)$/\2/p')
+              echo "DIGEST_${chart_name}=${digest}" >> "$GITHUB_ENV"
+              cosign sign --yes "$chart_url"
+            done
+          fi
 
       - name: Prepare GH pages readme
         run: |

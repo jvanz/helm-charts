@@ -81,6 +81,13 @@ jobs:
           helm repo add policy-reporter https://kyverno.github.io/policy-reporter
           helm repo update
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install chart-releaser
         uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
         with:
@@ -201,13 +208,6 @@ jobs:
               gh release upload $chart_name-$chart_version "./charts/kubewarden-defaults/${asset_name:1}_policylist.txt" --clobber
             fi
           done
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate provenance attestation for kubewarden-crds chart and push to OCI
         uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # v1.4.3

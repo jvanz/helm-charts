@@ -15,6 +15,7 @@ keywords:
   - admissions controller
   - policy report
   - audit scanner
+  - test
 home: https://www.kubewarden.io/
 maintainers:
   - name: Kubewarden Maintainers

@@ -15,6 +15,7 @@ keywords:
   - admissions controller
   - policy report
   - audit scanner
+  - test
 home: https://www.kubewarden.io/
 maintainers:
   - name: Kubewarden Maintainers
@@ -23,7 +24,7 @@ maintainers:
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 3.1.0-rc1
+version: 3.1.0-rc2
 # This is the version of Kubewarden stack
 appVersion: v1.18.0-rc1
 annotations:

@@ -146,6 +146,7 @@ questions:
       Enable tracing collection for all PolicyServers.
       Important: Requires OpenTelemetry CRDs available.
     group: "Telemetry"
+
   - variable: "telemetry.sidecar.metrics.port"
     type: string
     default: "8080"
@@ -153,7 +154,7 @@ questions:
     description: |
       Port of the Prometheus exporter and PolicyServer metrics service.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar&&telemetry.metrics=true"
+    show_if: "telemetry.mode=sidecar"
   - variable: "telemetry.sidecar.tracing.jaeger.endpoint"
     type: string
     default: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
@@ -161,7 +162,7 @@ questions:
     description: |
       Configuration of the OTLP/Jaeger exporter.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar&&telemetry.tracing=true"
+    show_if: "telemetry.mode=sidecar"
   - variable: "telemetry.sidecar.tracing.jaeger.tls.insecure"
     type: boolean
     default: false
@@ -169,7 +170,8 @@ questions:
     description: |
       Important: Insecure, not for production usage.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar&&telemetry.tracing=true"
+    show_if: "telemetry.mode=sidecar"
+
   - variable: "telemetry.custom.endpoint"
     type: string
     default: ""
@@ -177,7 +179,7 @@ questions:
     description: |
       Endpoint of the OpenTelemetry collector.
     group: "Telemetry"
-    show_if: "telemetry.mode=custom&&(telemetry.tracing=true||telemetry.metrics=true)"
+    show_if: "telemetry.mode=custom"
   - variable: "telemetry.custom.insecure"
     type: boolean
     default: false
@@ -185,7 +187,7 @@ questions:
     description: |
       Use TLS for the OpenTelemetry collector communication.
     group: "Telemetry"
-    show_if: "telemetry.mode=custom&&(telemetry.tracing=true||telemetry.metrics=true)"
+    show_if: "telemetry.mode=custom"
   - variable: "telemetry.custom.otelCollectorCertificateSecret"
     type: string
     default: ""
@@ -194,7 +196,7 @@ questions:
       Secret containing the certificate for the OpenTelemetry collector.
       The secret should contain the key `ca.crt`.
     group: "Telemetry"
-    show_if: "telemetry.mode=custom&&(telemetry.tracing=true||telemetry.metrics=true)"
+    show_if: "telemetry.mode=custom && telemetry.custom.insecure=false"
   - variable: "telemetry.custom.otelCollectorClientCertificateSecret"
     type: string
     default: ""
@@ -203,4 +205,4 @@ questions:
       Secret containing the client certificate for the OpenTelemetry collector (mTLS).
       The secret should contain the keys `tls.crt` and `tls.key`.
     group: "Telemetry"
-    show_if: "telemetry.mode=custom&&(telemetry.tracing=true||telemetry.metrics=true)"
+    show_if: "telemetry.mode=custom && telemetry.custom.insecure=false"

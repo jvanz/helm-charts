@@ -183,9 +183,9 @@ questions:
   - variable: "telemetry.custom.insecure"
     type: boolean
     default: false
-    label: TLS
+    label: Insecure communication
     description: |
-      Use TLS for the OpenTelemetry collector communication.
+      Disable TLS verification for the OpenTelemetry collector.
     group: "Telemetry"
     show_if: "telemetry.mode=custom"
   - variable: "telemetry.custom.otelCollectorCertificateSecret"

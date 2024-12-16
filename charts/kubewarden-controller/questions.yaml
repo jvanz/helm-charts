@@ -153,7 +153,7 @@ questions:
     description: |
       Port of the Prometheus exporter and PolicyServer metrics service.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar"
+    show_if: "telemetry.mode=sidecar && telemetry.metrics=true"
   - variable: "telemetry.sidecar.tracing.jaeger.endpoint"
     type: string
     default: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
@@ -161,7 +161,7 @@ questions:
     description: |
       Configuration of the OTLP/Jaeger exporter.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar"
+    show_if: "telemetry.mode=sidecar && telemetry.tracing=true"
   - variable: "telemetry.sidecar.tracing.jaeger.tls.insecure"
     type: boolean
     default: false
@@ -169,7 +169,7 @@ questions:
     description: |
       Important: Insecure, not for production usage.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar"
+    show_if: "telemetry.mode=sidecar && telemetry.tracing=true"
   - variable: "telemetry.custom.endpoint"
     type: string
     default: ""

@@ -144,6 +144,7 @@ questions:
     description: |
       Port of the Prometheus exporter and PolicyServer metrics service.
     group: "Telemetry"
+    show_if: "telemetry.mode=sidecar && telemetry.metrics=true"
   - variable: "telemetry.tracing"
     type: boolean
     default: false
@@ -153,7 +154,6 @@ questions:
       Enable tracing collection for all PolicyServers.
       Important: Requires OpenTelemetry CRDs available.
     group: "Telemetry"
-    show_if: "telemetry.mode=sidecar && telemetry.metrics=true"
   - variable: "telemetry.sidecar.tracing.jaeger.endpoint"
     type: string
     default: my-open-telemetry-collector.jaeger.svc.cluster.local:4317

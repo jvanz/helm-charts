@@ -10,9 +10,12 @@
 {{ $serverPrivateKey := ($cert.Key | b64enc) }}
 # check if the secrets already exist and if so, use the existing values
 {{ $caSecret := (lookup "v1" "Secret" .Release.Namespace "kubewarden-ca") }}
+{{ $caDate := now | unixEpoch | toString }}
+{{ $serverDate := $caDate }}
 {{ if $caSecret }}
 {{ $caCert = (index $caSecret.data "ca.crt") }}
 {{ $caPrivateKey = (index $caSecret.data "ca.key") }}
+{{ $caDate = (index $caSecret.data "date") }}
 # If the old CA certificate is missing, set it to "". This is to avoid issues
 # with b64dec when the old CA certificate is not present in the secret. This
 # can happen after an upgrade. The old CA field is removed from the secret
@@ -24,6 +27,7 @@
 {{ if $serverCertSecret }}
 {{ $serverCert = (index $serverCertSecret.data "tls.crt") }}
 {{ $serverPrivateKey = (index $serverCertSecret.data "tls.key") }}
+{{ $serverDate = (index $serverCertSecret.data "date") }}
 {{ end }}
 apiVersion: v1
 kind: Secret
@@ -35,7 +39,7 @@ metadata:
 data:
   ca.crt: {{ $caCert }}
   ca.key: {{ $caPrivateKey }}
-  date: {{ now | unixEpoch | toString }}
+  date: {{ $caDate }}
   {{- if $oldCaCert }}
   old-ca.crt: {{ $oldCaCert }}
   {{- end }}
@@ -50,7 +54,7 @@ metadata:
 data:
   tls.crt: {{ $serverCert }}
   tls.key: {{ $serverPrivateKey }}
-  date: {{ now | unixEpoch | toString }}
+  date: {{ $serverDate }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

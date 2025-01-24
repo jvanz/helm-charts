@@ -35,6 +35,7 @@ metadata:
 data:
   ca.crt: {{ $caCert }}
   ca.key: {{ $caPrivateKey }}
+  date: {{ now | unixEpoch | toString }}
   {{- if $oldCaCert }}
   old-ca.crt: {{ $oldCaCert }}
   {{- end }}
@@ -49,6 +50,7 @@ metadata:
 data:
   tls.crt: {{ $serverCert }}
   tls.key: {{ $serverPrivateKey }}
+  date: {{ now | unixEpoch | toString }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

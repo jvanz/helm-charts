@@ -10,7 +10,7 @@
 {{ $serverPrivateKey := ($cert.Key | b64enc) }}
 # check if the secrets already exist and if so, use the existing values
 {{ $caSecret := (lookup "v1" "Secret" .Release.Namespace "kubewarden-ca") }}
-{{ $caDate := uuidv4 }}
+{{ $caDate := uuidv4 | b64enc }}
 {{ $serverDate := $caDate }}
 {{ if $caSecret }}
 {{ $caCert = (index $caSecret.data "ca.crt") }}

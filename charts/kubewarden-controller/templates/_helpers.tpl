@@ -122,6 +122,20 @@ Create the name of the service account to use for kubewarden-controller
 - {{ .Release.Namespace }}
 - --loglevel
 - {{ .Values.auditScanner.logLevel }}
+{{- if .Values.auditScanner.suseObservability }}
+- --suseobs-apikey
+- {{ .Values.auditScanner.suseObservability.apiKey }}
+- --suseobs-url
+- {{ .Values.auditScanner.suseObservability.url }}
+- --suseobs-urn
+- {{ .Values.auditScanner.suseObservability.healthCheckStreamUrn }}
+- --suseobs-cluster
+- {{ .Values.auditScanner.suseObservability.cluster }}
+- --suseobs-repeat-interval
+- {{ .Values.auditScanner.suseObservability.repeatInterval }}
+- --suseobs-expire-interval
+- {{ .Values.auditScanner.suseObservability.expireInterval }}
+{{- end }}
 {{- if gt $parallelNamespaces 0 }}
 - --parallel-namespaces
 - "{{ $parallelNamespaces }}"

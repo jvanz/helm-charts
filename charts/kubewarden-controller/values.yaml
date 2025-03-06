@@ -279,6 +279,13 @@ auditScanner:
   pageSize: 100
 # Values to configure the policy reporter subchart enabled by the
 # auditScanner.policyReporter flag
+  # suseObservability:
+  #   apiKey: ""
+  #   url: ""
+  #   healthCheckStreamUrn: ""
+  #   cluster: ""
+  #   repeatInterval: ""
+  #   expireInterval: ""
 policy-reporter:
   image:
     registry: ghcr.io

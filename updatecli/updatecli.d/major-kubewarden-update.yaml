@@ -1,5 +1,5 @@
 name: Update Kubewarden chart versions
-pipelineid: "update_helm_chart"
+pipelineid: "update_helm_chart_no_crd"
 
 sources:
   defaultChartVersion:

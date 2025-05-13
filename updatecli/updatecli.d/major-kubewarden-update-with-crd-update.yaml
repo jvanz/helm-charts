@@ -1,4 +1,5 @@
 name: Update Kubewarden chart versions
+pipelineid: "update_helm_chart_with_crd"
 
 sources:
   defaultChartVersion:
@@ -286,7 +287,7 @@ scms:
       token: "{{ requiredEnv .github.token }}"
       username: "{{ requiredEnv .github.user }}"
       branch: "{{ .github.branch }}"
-      commitusingapi: false # enable cryptographically signed commits
+      commitusingapi: true # enable cryptographically signed commits
       commitmessage:
         type: "fix"
         title: "Update Kubewarden Helm charts"

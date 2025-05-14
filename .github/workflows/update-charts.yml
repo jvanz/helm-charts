@@ -372,7 +372,7 @@ jobs:
       #   uses: updatecli/updatecli-action@ae3030ce1710c6496214fb1f8fd3bd9437b2a69d # v2.82.0
       - name: Install Updatecli in the runner
         shell: bash
-        run: go install github.com/jvanz/updatecli@latest
+        run: go install github.com/jvanz/updatecli@main
 
       - uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
         id: generate-token

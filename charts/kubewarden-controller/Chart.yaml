@@ -23,7 +23,7 @@ maintainers:
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 5.5.0
+version: 5.6.0
 # This is the version of Kubewarden stack
 appVersion: v1.27.0
 annotations:
@@ -47,6 +47,6 @@ annotations:
   catalog.cattle.io/type: cluster-tool
 dependencies:
   - name: policy-reporter
-    version: 3.3.1
+    version: 3.3.2
     repository: https://kyverno.github.io/policy-reporter
     condition: auditScanner.policyReporter

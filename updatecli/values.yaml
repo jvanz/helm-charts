@@ -12,6 +12,22 @@ github:
 # The ociArtifacts list all the container images and policies that needs
 # to be updated in the manifest
 ociArtifacts:
+  # Kubewarden container image
+  # The workflowUrl field defined in the Kubewarden container images is the
+  # url used to validate the identity with cosign
+  - file: "charts/kubewarden-controller/values.yaml"
+    key: "$.image.tag"
+    image: "ghcr.io/kubewarden/kubewarden-controller"
+    workflowUrl: "https://github.com/kubewarden/kubewarden-controller/.github/workflows/release.yml@refs/tags"
+    name: "controller"
+  - file: "charts/kubewarden-controller/values.yaml"
+    key: "$.auditScanner.image.tag"
+    image: "ghcr.io/kubewarden/audit-scanner"
+    workflowUrl: "https://github.com/kubewarden/audit-scanner/.github/workflows/release.yml@refs/tags"
+  - file: "charts/kubewarden-defaults/values.yaml"
+    key: "$.policyServer.image.tag"
+    image: "ghcr.io/kubewarden/policy-server"
+    workflowUrl: "https://github.com/kubewarden/policy-server/.github/workflows/release.yml@refs/tags"
   # Policies
   - image: ghcr.io/kubewarden/policies/allow-privilege-escalation-psp
     file: "charts/kubewarden-defaults/values.yaml"

@@ -39,6 +39,14 @@ sources:
       file: "{{ $chart.file }}"
       key: "{{ $chart.versionKey }}"
   # {{ end }}
+  # {{ range $kwImage := .kubewardenContainerImage}}
+  "source/{{ $kwImage.name }}Version":
+    kind: yaml
+    scmid: default
+    spec:
+      file: "{{ $kwImage.file }}"
+      key: "{{ $kwImage.key }}"
+  # {{ end }}
 
 # {{ if .helmCharts}}
 conditions:
@@ -84,6 +92,30 @@ targets:
       # have the condition to ensure the script is not updating the wrong helm
       # chart
       key: "$.spec.charts[{{ $i }}].version"
+  # {{ end }}
+  # {{ range $kwImage := .kubewardenContainerImage}}
+  "target/{{ $kwImage.name }}ContainerImage":
+    name: "Update {{ $kwImage.name }} image in Hauler manifest"
+    kind: file
+    sourceid: "source/{{ $kwImage.name }}Version"
+    scmid: "default"
+    dependson:
+      - '{{ printf "source#source/%sVersion" $kwImage.name }}'
+    spec:
+      file: "charts/hauler_manifest.yaml"
+      matchpattern: "(.*)- ?name: ?{{ $kwImage.image }}:(v?.+) ?(.*)"
+      replacepattern: '$1- name: {{ $kwImage.image }}:{{ printf "source/%sVersion" $kwImage.name | source }}'
+  "target/{{ $kwImage.name }}ContainerImageIdentityRegex":
+    name: "Update {{ $kwImage.name }} image identity regex in Hauler manifest"
+    kind: file
+    sourceid: "source/{{ $kwImage.name }}Version"
+    scmid: "default"
+    dependson:
+      - '{{ printf "source#source/%sVersion" $kwImage.name }}'
+    spec:
+      file: "charts/hauler_manifest.yaml"
+      matchpattern: "(.*)? certificate-identity-regexp: ?{{ $kwImage.workflowUrl }}/(v?.+) ?(.*)"
+      replacepattern: '$1 certificate-identity-regexp: {{ $kwImage.workflowUrl }}/{{ printf "source/%sVersion" $kwImage.name | source }}'
   # {{ end }}
 
 actions:

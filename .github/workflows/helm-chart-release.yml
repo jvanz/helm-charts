@@ -198,9 +198,9 @@ jobs:
           cp imagelist.txt $image_asset_name
 
           # sign hauler manifest, image and policy list
-          cosign sign-blob ./charts/hauler_manifest.yaml --output-certificate hauler_manifest_cert.pem --output-signature hauler_manifest.sig
-          cosign sign-blob $image_asset_name --output-certificate $(image_asset_name)_cert.pem --output-signature $(image_asset_name).sig
-          cosign sign-blob ./charts/kubewarden-defaults/policylist.txt --output-certificate policylist_cert.pem --output-signature policylist.sig
+          cosign sign-blob --yes ./charts/hauler_manifest.yaml --output-certificate hauler_manifest_cert.pem --output-signature hauler_manifest.sig
+          cosign sign-blob --yes $image_asset_name --output-certificate $(image_asset_name)_cert.pem --output-signature $(image_asset_name).sig
+          cosign sign-blob --yes ./charts/kubewarden-defaults/policylist.txt --output-certificate policylist_cert.pem --output-signature policylist.sig
 
           charts=$(find $chart_directory -maxdepth 1 -mindepth 1 -type f)
           for chart in $charts; do

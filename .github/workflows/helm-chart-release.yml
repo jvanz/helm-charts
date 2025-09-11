@@ -199,7 +199,7 @@ jobs:
 
           # sign hauler manifest, image and policy list
           cosign sign-blob --yes ./charts/hauler_manifest.yaml --output-certificate hauler_manifest_cert.pem --output-signature hauler_manifest.sig
-          cosign sign-blob --yes $image_asset_name --output-certificate $(image_asset_name)_cert.pem --output-signature $(image_asset_name).sig
+          cosign sign-blob --yes $image_asset_name --output-certificate ${image_asset_name}_cert.pem --output-signature ${image_asset_name}.sig
           ls .
 
           charts=$(find $chart_directory -maxdepth 1 -mindepth 1 -type f)
@@ -213,8 +213,8 @@ jobs:
             if [[ $chart_name != *"-crds" ]]; then
               # updaload image list and its certificate and signature
               gh release upload $chart_name-$chart_version $image_asset_name --clobber
-              gh release upload $chart_name-$chart_version $(image_asset_name)_cert.pem --clobber
-              gh release upload $chart_name-$chart_version $(image_asset_name).sig --clobber
+              gh release upload $chart_name-$chart_version ${image_asset_name}_cert.pem --clobber
+              gh release upload $chart_name-$chart_version ${image_asset_name}.sig --clobber
             fi
             if [[ $chart_name == *"-defaults" ]]; then
               cp "./charts/kubewarden-defaults/policylist.txt" "./charts/kubewarden-defaults/${asset_name:1}_policylist.txt"

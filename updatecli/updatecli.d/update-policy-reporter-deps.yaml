@@ -1,0 +1,36 @@
+name: Update policy-reporter Helm chart dependency
+
+# {{ if .pipelineid }}
+pipelineid: "{{ .pipelineid }}"
+# {{ end }}
+
+# Using autodiscovery to update the policy-reporter chart dependency
+autodiscovery:
+  scmid: default
+  crawlers:
+    helm:
+      versionfilter:
+        kind: semver
+        # It's not possible to use autodiscovery to update container images because
+        # we do not follow the expected pattern in the value due the feature to
+        # define a different default registry
+      ignorecontainer: true
+      versionincrement: "none"
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.author }}"
+      email: "{{ .github.email }}"
+      directory: "/tmp/helm-charts"
+      owner: "{{ requiredEnv .github.owner }}"
+      repository: "helm-charts"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ requiredEnv .github.user }}"
+      branch: "{{ .github.branch }}"
+      commitmessage:
+        type: "deps"
+        title: "Update Helm charts dependencies"
+        hidecredit: true
+        footers: "Signed-off-by: Kubewarden bot <cncf-kubewarden-maintainers@lists.cncf.io>"

@@ -217,7 +217,7 @@ preDeleteJob:
     # The registry is defined in the global.cattle.systemDefaultRegistry value
     # kuberlr-kubectl image to be used in the pre-delete helm hook.
     repository: "rancher/kuberlr-kubectl"
-    tag: v5.0.0
+    tag: v6.0.0
 # kubewarden-controller deployment settings:
 podAnnotations: {}
 nodeSelector: {}
@@ -294,13 +294,13 @@ policy-reporter:
   image:
     registry: ghcr.io
     repository: kyverno/policy-reporter
-    tag: 3.4.2
+    tag: 3.5.0
   ui:
     enabled: true
     image:
       registry: ghcr.io
       repository: kyverno/policy-reporter-ui
-      tag: 2.4.2
+      tag: 2.4.4
     views:
       logs: false
     logo:
